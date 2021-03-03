@@ -52,6 +52,7 @@ def get_urls_from_url(url):
 	return get_urls_from_html(html_data,url)
 
 def arr_print(arr):
+	name_month=['января','февраля','']
 	arr_new=[]
 	arr_str=""
 	for k in range(len(arr)):
@@ -78,14 +79,24 @@ def grub_all_urls():
 				data[key][key2]=get_urls_from_url(value2)
 	return data
 
+def grub_all_htmls():
+	data = grub_all_urls()
+	for key, value in data.items():
+		if key.lower().find("препод")==-1:
+			for key2, value2 in data[key].items():
+				for key3, value3 in data[key][key2].items():
+					data[key][key2][key3]=arr_print(url_to_array(value3))
+					#print(key3)
+		else:
+			for key2, value2 in data[key].items():
+					data[key][key2]=arr_print(url_to_array(value2))
+					#print(key2)
+	return data
 
 # for testing
 def test():
 
-	url = 'http://rasp.pskgu.ru/Inst6/21.html'
-	arr = url_to_array(url)
-	a = arr_print(arr)
-	print(a[0])
+	
 
 	#print(a)
 
@@ -95,15 +106,15 @@ def test():
 
 	#print(1)
 	#print(1)
-	"""
-	data = grub_all_urls()
-	#print(data)
-	k=0
-	for key, value in data['Расписание преподавателей'].items():
-		#print(key)
-		k=k+1
+	
+	data = grub_all_htmls()
+	print(data)
+
+		#print(key,value)
+
+		#print(a[0])
 	#print(k)
-"""
+
 	#print( "Расписание преподавателей".lower().find("препод"))
 if __name__ == '__main__': 
 	test()
