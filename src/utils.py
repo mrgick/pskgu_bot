@@ -1,5 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
+import time
+from datetime import datetime
+import re
 
 #get array data using beatifulsoap
 def html_tables_to_array(html_data):
@@ -52,10 +55,23 @@ def get_urls_from_url(url):
 	return get_urls_from_html(html_data,url)
 
 def arr_print(arr):
-	name_month=['января','февраля','']
-	arr_new=[]
+	name_month=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек']
+	arr_new={}
 	arr_str=""
 	for k in range(len(arr)):
+		name_arr = arr[k][2][0].split(",")[1].split(" ")
+		day = int(name_arr[0])
+		
+		k=0
+		while re.match(r''+name_month[k]+'',name_arr[2]) == None:
+			k=k+1
+		month = k+1
+
+		t = datetime(2021, month, day)
+		
+		name_time=int(time.mktime(t.timetuple()))
+		
+
 		for i in range(len(arr[k])):
 			if i>1:
 				for x in range(len(arr[k][i])):
@@ -64,7 +80,7 @@ def arr_print(arr):
 							arr_str = arr_str+arr[k][i][0] +"\n"
 						else:
 							arr_str = arr_str +  str(x)+")" + arr[k][i][x] +"\n"
-		arr_new.append(arr_str)
+		arr_new.update({name_time:arr_str})
 		arr_str=""
 	return arr_new
 
@@ -97,18 +113,18 @@ def grub_all_htmls():
 def test():
 
 	
-
-	#print(a)
-
-
+	url = "http://rasp.pskgu.ru/Inst6/21.html"
+	a = url_to_array(url)
+	arr=arr_print(a)
+	print(arr[1614546000])
 
 	#import psycopg2
 
 	#print(1)
 	#print(1)
 	
-	data = grub_all_htmls()
-	print(data)
+	#data = grub_all_htmls()
+	#print(data)
 
 		#print(key,value)
 
