@@ -52,18 +52,20 @@ def get_urls_from_url(url):
 	return get_urls_from_html(html_data,url)
 
 def arr_print(arr):
+	arr_new=[]
 	arr_str=""
 	for k in range(len(arr)):
-		arr_str = arr_str + "неделя: "+str(k+1)+"-я"+"\n"
-		for i in range(len(arr[0])):
+		for i in range(len(arr[k])):
 			if i>1:
-				for x in range(len(arr[0][i])):
-					if arr[0][i][x] !="":
+				for x in range(len(arr[k][i])):
+					if arr[k][i][x] !="":
 						if x==0:
-							arr_str = arr_str +  arr[0][i][x] +"\n"
+							arr_str = arr_str+arr[k][i][0] +"\n"
 						else:
-							arr_str = arr_str +  arr[0][0][x] + arr[0][i][x] + arr[0][1][x]  +"\n"
-	return arr_str
+							arr_str = arr_str +  str(x) + arr[k][i][x] +"\n"
+		arr_new.append(arr_str)
+		arr_str=""
+	return arr_new
 
 def grub_all_urls():
 	url_rasp = "http://rasp.pskgu.ru/"
@@ -80,26 +82,28 @@ def grub_all_urls():
 # for testing
 def test():
 
-	#a={'0451-01': 'http://rasp.pskgu.ru/Inst4/1.html', '0202-01': 'http://rasp.pskgu.ru/Inst4/2.html', '0203-01': 'http://rasp.pskgu.ru/Inst4/3.html', '0204-01': 'http://rasp.pskgu.ru/Inst4/4.html', '0205-01': 'http://rasp.pskgu.ru/Inst4/5.html', '0451-02': 'http://rasp.pskgu.ru/Inst4/6.html', '0202-02': 'http://rasp.pskgu.ru/Inst4/7.html', '0203-02': 'http://rasp.pskgu.ru/Inst4/8.html', '0204-03': 'http://rasp.pskgu.ru/Inst4/9.html', '0205-02': 'http://rasp.pskgu.ru/Inst4/10.html', '0451-03': 'http://rasp.pskgu.ru/Inst4/11.html', '0202-04': 'http://rasp.pskgu.ru/Inst4/12.html', '0203-03': 'http://rasp.pskgu.ru/Inst4/13.html', '0204-04': 'http://rasp.pskgu.ru/Inst4/14.html', '0205-03': 'http://rasp.pskgu.ru/Inst4/15.html', '0451-04': 'http://rasp.pskgu.ru/Inst4/16.html', '0202-05': 'http://rasp.pskgu.ru/Inst4/17.html', '0203-04': 'http://rasp.pskgu.ru/Inst4/18.html', '0204-05': 'http://rasp.pskgu.ru/Inst4/19.html', '0205-13': 'http://rasp.pskgu.ru/Inst4/20.html', '0451-06': 'http://rasp.pskgu.ru/Inst4/21.html', '0202-06': 'http://rasp.pskgu.ru/Inst4/22.html', '0203-05': 'http://rasp.pskgu.ru/Inst4/23.html', '0204-11': 'http://rasp.pskgu.ru/Inst4/24.html', '0205-16': 'http://rasp.pskgu.ru/Inst4/25.html', '0451-11': 'http://rasp.pskgu.ru/Inst4/26.html', '0202-11': 'http://rasp.pskgu.ru/Inst4/27.html', '0203-11': 'http://rasp.pskgu.ru/Inst4/28.html', '0204-12': 'http://rasp.pskgu.ru/Inst4/29.html', '0451-12': 'http://rasp.pskgu.ru/Inst4/30.html', '0202-12': 'http://rasp.pskgu.ru/Inst4/31.html', '0203-12(1)': 'http://rasp.pskgu.ru/Inst4/32.html', '0204-13': 'http://rasp.pskgu.ru/Inst4/33.html', '0451-15': 'http://rasp.pskgu.ru/Inst4/34.html', '0202-13': 'http://rasp.pskgu.ru/Inst4/35.html', '0203-12(2)': 'http://rasp.pskgu.ru/Inst4/36.html', '0204-15': 'http://rasp.pskgu.ru/Inst4/37.html', '0451-16': 'http://rasp.pskgu.ru/Inst4/38.html', '0202-14': 'http://rasp.pskgu.ru/Inst4/39.html', '0203-13': 'http://rasp.pskgu.ru/Inst4/40.html', '0204-16': 'http://rasp.pskgu.ru/Inst4/41.html', '0441-02': 'http://rasp.pskgu.ru/Inst4/42.html', '0202-15': 'http://rasp.pskgu.ru/Inst4/43.html', '0203-15': 'http://rasp.pskgu.ru/Inst4/44.html', '0154-01': 'http://rasp.pskgu.ru/Inst4/45.html', '0441-03': 'http://rasp.pskgu.ru/Inst4/46.html', '0202-16': 'http://rasp.pskgu.ru/Inst4/47.html', '0203-16': 'http://rasp.pskgu.ru/Inst4/48.html', '0154-02': 'http://rasp.pskgu.ru/Inst4/49.html', '0441-04': 'http://rasp.pskgu.ru/Inst4/50.html', '0152-01': 'http://rasp.pskgu.ru/Inst4/51.html', '0153-01': 'http://rasp.pskgu.ru/Inst4/52.html', '0154-03': 'http://rasp.pskgu.ru/Inst4/53.html', '0441-01М': 'http://rasp.pskgu.ru/Inst4/54.html', '0152-02': 'http://rasp.pskgu.ru/Inst4/55.html', '0153-02': 'http://rasp.pskgu.ru/Inst4/56.html', '0214-14': 'http://rasp.pskgu.ru/Inst4/57.html', '0451-11М': 'http://rasp.pskgu.ru/Inst4/58.html', '0152-03': 'http://rasp.pskgu.ru/Inst4/59.html', '0153-03': 'http://rasp.pskgu.ru/Inst4/60.html', '0451-12М': 'http://rasp.pskgu.ru/Inst4/61.html', '0152-04': 'http://rasp.pskgu.ru/Inst4/62.html', '0213-14': 'http://rasp.pskgu.ru/Inst4/63.html', '0202-01М': 'http://rasp.pskgu.ru/Inst4/64.html', '0202-02М': 'http://rasp.pskgu.ru/Inst4/65.html', '0202-11М': 'http://rasp.pskgu.ru/Inst4/66.html', '0152-01М': 'http://rasp.pskgu.ru/Inst4/67.html'}
-	#a = get_html('http://rasp.pskgu.ru/Inst6/studrasp.html')
+	url = 'http://rasp.pskgu.ru/Inst6/21.html'
+	arr = url_to_array(url)
+	a = arr_print(arr)
+	print(a[5])
 
-	
-	#url = 'http://rasp.pskgu.ru/Inst4/studrasp.html'
 	#print(a)
-	#for z,x in a.items():
-	#	h=url_to_array(x)
-	#	print(arr_print(h))
+
 
 
 	#import psycopg2
 
-
+	#print(1)
+	#print(1)
+	"""
 	data = grub_all_urls()
-
-
-
-	print(data)
-
+	#print(data)
+	k=0
+	for key, value in data['Расписание преподавателей'].items():
+		#print(key)
+		k=k+1
+	#print(k)
+"""
 	#print( "Расписание преподавателей".lower().find("препод"))
 if __name__ == '__main__': 
 	test()
