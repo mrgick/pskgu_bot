@@ -55,22 +55,27 @@ def get_urls_from_url(url):
 	return get_urls_from_html(html_data,url)
 
 def arr_print(arr):
-	name_month=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек']
+	name_month=['янв','фев','мар','апр','ма','июн','июл','авг','сен','окт','ноя','дек']
 	arr_new={}
 	arr_str=""
 	for k in range(len(arr)):
-		name_arr = arr[k][2][0].split(",")[1].split(" ")
-		day = int(name_arr[0])
-		
-		k=0
-		while re.match(r''+name_month[k]+'',name_arr[2]) == None:
-			k=k+1
-		month = k+1
 
-		t = datetime(2021, month, day)
-		
-		name_time=int(time.mktime(t.timetuple()))
-		
+		#print(arr[k][2][0])
+		try:
+			name_arr = arr[k][2][0].split(",")[1].split(" ")
+			day = int(name_arr[0])
+			
+			d=0
+			#print(name_arr[2])
+			while re.match(r''+name_month[d]+'',name_arr[2]) == None:
+				d=d+1
+			month = d+1
+			t = datetime(2021, month, day)
+			
+			name_time=int(time.mktime(t.timetuple()))
+		except:
+			name_time=k
+
 
 		for i in range(len(arr[k])):
 			if i>1:
@@ -112,11 +117,13 @@ def grub_all_htmls():
 # for testing
 def test():
 
+	data = grub_all_htmls()
+	print(data)
 	
-	url = "http://rasp.pskgu.ru/Inst6/21.html"
-	a = url_to_array(url)
-	arr=arr_print(a)
-	print(arr[1614546000])
+	#url = "http://rasp.pskgu.ru/Inst6/1.html"
+	#a = url_to_array(url)
+	#arr=arr_print(a)
+	#print(arr)
 
 	#import psycopg2
 
