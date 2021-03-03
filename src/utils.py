@@ -62,7 +62,7 @@ def arr_print(arr):
 						if x==0:
 							arr_str = arr_str+arr[k][i][0] +"\n"
 						else:
-							arr_str = arr_str +  str(x) + arr[k][i][x] +"\n"
+							arr_str = arr_str +  str(x)+")" + arr[k][i][x] +"\n"
 		arr_new.append(arr_str)
 		arr_str=""
 	return arr_new
@@ -85,7 +85,7 @@ def test():
 	url = 'http://rasp.pskgu.ru/Inst6/21.html'
 	arr = url_to_array(url)
 	a = arr_print(arr)
-	print(a[5])
+	print(a[0])
 
 	#print(a)
 
