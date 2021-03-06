@@ -28,6 +28,13 @@ def update_document(collection, query_elements, new_values):
 	collection.update_one(query_elements, {'$set': new_values})
 	return 'updated'
 
+
+def delete_document(collection, query):
+    """ Function to delete a single document from a collection.
+    """
+    collection.delete_one(query)
+    return 'deleted'
+
 def db_work():
 	""" working with mongodb
 	"""
