@@ -75,7 +75,7 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 			if data.get(now)!=None:
 				mess=data.get(now)
 
-	await event.answer(message=mess)
+	await event.answer(message=mess+"\n"+week_monday_key(0))
 
 
 if __name__=="__main__":
