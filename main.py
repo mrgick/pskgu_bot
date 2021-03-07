@@ -10,8 +10,8 @@ from vkwave.types.bot_events import BotEventType
 import pymongo
 #for time
 import datetime
-import time
 
+#find in database key with name
 def db_read(name):
 	try:
 		client = pymongo.MongoClient(mongo_url)
@@ -23,14 +23,12 @@ def db_read(name):
 	finally:
 		client.close()
 
-#get key (with nowadate) in str, which uses in db
-def week_monday_key(n=0):
-	time_now=datetime.datetime.utcnow()
-	monday = time_now - datetime.timedelta(days = time_now.weekday()-7*n)
-	moday_zero = datetime.datetime(monday.year, monday.month, monday.day)
-	number=str(int(time.mktime(moday_zero.timetuple())))
-	return number
+#get number of week
+def week_now(n=0):
+	time_now=datetime.datetime.utcnow().strftime('%V')
+	return int(time_now)+n
 
+#инициализация бота
 bot = SimpleLongPollBot(tokens=token, group_id=group_id)
 
 #начать
@@ -70,12 +68,13 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 				except:
 					pass
 
-			now=week_monday_key(n)
-			
-			if data.get(now)!=None:
-				mess=data.get(now)
+			#поиск текущей недели (костыль, нужно будет переделать)
+			week=week_now(n)
+			for number, text in data.items():
+				if week == int(datetime.datetime.fromtimestamp(int(number)).strftime('%V')):
+					mess=text
 
-	await event.answer(message=mess+"\n"+week_monday_key(0))
+	await event.answer(message=mess+"\n"+str(week_now(0)))
 
 
 if __name__=="__main__":
