@@ -23,11 +23,6 @@ def db_read(name):
 	finally:
 		client.close()
 
-#get number of week
-def week_now(n=0):
-	time_now=datetime.datetime.utcnow().strftime('%V')
-	return int(time_now)+n
-
 #инициализация бота
 bot = SimpleLongPollBot(tokens=token, group_id=group_id)
 
@@ -68,13 +63,13 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 				except:
 					pass
 
-			#поиск текущей недели (костыль, нужно будет переделать)
-			week=week_now(n)
+			#поиск текущей недели в словаре (костыль, нужно будет переделать)
+			week=int(datetime.datetime.utcnow().strftime('%V'))+n #номер недели
 			for number, text in data.items():
 				if week == int(datetime.datetime.fromtimestamp(int(number)).strftime('%V')):
 					mess=text
 
-	await event.answer(message=mess+"\n"+str(week_now(0)))
+	await event.answer(message=mess+"\n")
 
 
 if __name__=="__main__":
