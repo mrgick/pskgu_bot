@@ -1,26 +1,32 @@
 #config
 from config import *
 #for vk bot
-from vkwave.bots.utils.keyboards import Keyboard
-from vkwave.bots.utils.keyboards.keyboard import ButtonColor
 from vkwave.bots import SimpleLongPollBot
-from vkwave.bots import CallbackAnswer, PayloadFilter, TextFilter
-from vkwave.types.bot_events import BotEventType
+#keyboard
+from vkwave.bots.utils.keyboards import Keyboard
+#for storage
+from vkwave.bots.storage.storages import Storage
+from vkwave.bots.storage.types import Key
 #for time
 import datetime
 #for db
 import motor.motor_asyncio
+#for initialize storage
+import asyncio
 
 #find in database key with name
 async def db_find_one(name):
+	mongo_url = await storage.get(Key("MONGO_URL"))
 	client = motor.motor_asyncio.AsyncIOMotorClient(mongo_url)
 	db = client['DB']
 	collection = db['rasp']
 	values = await collection.find_one({'name': name})
 	return values 
 
+
+
 #инициализация бота
-bot = SimpleLongPollBot(tokens=token, group_id=group_id)
+bot = SimpleLongPollBot(tokens=token, group_id = group_id)
 
 #начать
 @bot.message_handler(bot.text_contains_filter("начать") | bot.text_contains_filter("start"))
@@ -48,6 +54,7 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 	#Проверяем есть ли аргументы
 	if len(args)>0:
 		#проверяем первый аргумент (имя)
+		ALL=await storage.get(Key("ALL"))
 		if ALL.get(args[0])!=None:
 			data = await db_find_one(args[0])
 			data=data.get('text')
@@ -69,6 +76,9 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 	await event.answer(message=mess+"\n")
 
 
+
+
 if __name__=="__main__":
+	asyncio.get_event_loop().run_until_complete(initialize_storage())
 	bot.run_forever()
 
