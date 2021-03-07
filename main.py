@@ -6,22 +6,18 @@ from vkwave.bots.utils.keyboards.keyboard import ButtonColor
 from vkwave.bots import SimpleLongPollBot
 from vkwave.bots import CallbackAnswer, PayloadFilter, TextFilter
 from vkwave.types.bot_events import BotEventType
-#for db
-import pymongo
 #for time
 import datetime
+#for db
+import motor.motor_asyncio
 
 #find in database key with name
-def db_read(name):
-	try:
-		client = pymongo.MongoClient(mongo_url)
-		db = client['DB']
-		collection = db['rasp']
-		return collection.find_one({'name':name})
-	except pymongo.errors:
-		print(e)
-	finally:
-		client.close()
+async def db_find_one(name):
+	client = motor.motor_asyncio.AsyncIOMotorClient(mongo_url)
+	db = client['DB']
+	collection = db['rasp']
+	values = await collection.find_one({'name': name})
+	return values 
 
 #инициализация бота
 bot = SimpleLongPollBot(tokens=token, group_id=group_id)
@@ -53,7 +49,8 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 	if len(args)>0:
 		#проверяем первый аргумент (имя)
 		if ALL.get(args[0])!=None:
-			data=db_read(args[0]).get('text')
+			data = await db_find_one(args[0])
+			data=data.get('text')
 			
 			#проверяем второй аргумент (число)
 			n=0
