@@ -1,0 +1,12 @@
+aiohttp==3.7.4.post0
+async-timeout==3.0.1
+attrs==20.3.0
+chardet==4.0.0
+dnspython==2.1.0
+idna==3.1
+multidict==5.1.0
+pydantic==1.8.1
+pymongo==3.11.3
+typing-extensions==3.7.4.3
+vkwave==0.2.10
+yarl==1.6.3
