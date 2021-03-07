@@ -25,7 +25,7 @@ def db_read(name):
 
 #get key (with nowadate) in str, which uses in db
 def week_monday_key(n=0):
-	time_now=datetime.datetime.now()
+	time_now=datetime.datetime.utcnow()
 	monday = time_now - datetime.timedelta(days = time_now.weekday()-7*n)
 	moday_zero = datetime.datetime(monday.year, monday.month, monday.day)
 	number=str(int(time.mktime(moday_zero.timetuple())))
