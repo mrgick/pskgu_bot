@@ -37,6 +37,12 @@ def week_now(n=0):
 	number=str(int(time.mktime(moday_zero.timetuple())))
 	return number
 
+def week_tests(n=0):
+	time_now=datetime.datetime.now(pytz.timezone('Europe/London'))
+	monday = time_now - datetime.timedelta(days = time_now.weekday()-7*n)
+	moday_zero = datetime.datetime(monday.year, monday.month, monday.day)
+	number=str(int(time.mktime(moday_zero.timetuple())))
+	return time_now,monday,moday_zero,number
 
 #поиск определенного значения по ключу name
 async def db_find_name(name):
@@ -93,7 +99,7 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 			if data.get(week)!=None:
 				mess=data.get(week)
 
-	await event.answer(message=mess)
+	await event.answer(message=mess+"\n"+str(week_tests()))
 
 
 
