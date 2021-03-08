@@ -14,12 +14,20 @@ import motor.motor_asyncio
 #for initialize storage
 import asyncio
 
+"""
+TODO: 
+-нужно понять callback и payload
+-сделать поиск по именам
+-сделать перевод на англ, при помощи google translate 
+-пофиксить поиск в бд на сервере
+"""
+
 #инициалицазия mongodb
 client = motor.motor_asyncio.AsyncIOMotorClient(mongo_url)
 #инициализация бота
 bot = SimpleLongPollBot(tokens=token, group_id = group_id)
 
-#find in database key with name
+#поиск определенного значения по ключу name
 async def db_find_name(name):
 	db = client['DB']
 	collection = db['rasp']
@@ -27,23 +35,23 @@ async def db_find_name(name):
 	return values 
 
 #начать
-@bot.message_handler(bot.text_contains_filter("начать") | bot.text_contains_filter("start"))
+@bot.message_handler(bot.text_contains_filter("начать"))
 async def handle(event: bot.SimpleBotEvent) -> str:
 	kb = Keyboard(one_time=True,inline=False)
-	kb.add_text_button("справка")
+	kb.add_text_button("/help")
 	kb.add_row()
 	kb.add_link_button(text="расписание",link="http://rasp.pskgu.ru")
-	await event.answer(message="выберите", keyboard=kb.get_keyboard())
+	await event.answer(message="Выберите действие", keyboard=kb.get_keyboard())
 
-# нужно понять каллбак с payload
-@bot.message_handler(bot.text_contains_filter("faq") | bot.text_contains_filter("справка"))
+#справка
+@bot.message_handler(bot.command_filter(commands=("help", "справка"), prefixes=("/")))
 async def handle(event: bot.SimpleBotEvent) -> str:
 	
-	mess="общий вид команды:\nпоказать  имя (группа или человек)  неделя (по умолчанию стоит текущая, +1 -> след., а -1 -> пред.)\n\nпример команды: \nпоказать 0431-06 +1\n(даная команда покажет следующую неделю группы 0431-06)"
+	mess="общий вид команды:\n/показать(или /show)  имя (группа или человек)  неделя (по умолчанию стоит текущая, +1 -> след., а -1 -> пред.)\n\nпример команды: \n/показать 0431-06 +1\n(даная команда покажет следующую неделю группы 0431-06)"
 	await event.answer(message=mess)
 
 #вывод недели	
-@bot.message_handler(bot.text_contains_filter("show") | bot.text_contains_filter("показать"))
+@bot.message_handler(bot.command_filter(commands=("show", "показать"), prefixes=("/")))
 async def handle(event: bot.SimpleBotEvent) -> str:
 	
 	mess="Данной записи в бд нет, либо команда неверно введена"
