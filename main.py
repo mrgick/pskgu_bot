@@ -9,8 +9,10 @@ from vkwave.bots.storage.storages import Storage
 from vkwave.bots.storage.types import Key
 #for time
 import datetime
-import time
-import pytz
+
+#import time
+#import pytz
+
 #for db
 import motor.motor_asyncio
 #for initialize storage
@@ -21,7 +23,7 @@ TODO:
 -нужно понять callback и payload
 -сделать поиск по именам
 -сделать перевод на англ, при помощи google translate 
--!пофиксить поиск в бд на сервере
+-!пофиксить поиск в бд на сервере (частично понял, для начала нужно переделать парсер)
 -!сделать пост уведомления об изменении
 """
 
@@ -30,6 +32,7 @@ client = motor.motor_asyncio.AsyncIOMotorClient(mongo_url)
 #инициализация бота
 bot = SimpleLongPollBot(tokens=token, group_id = group_id)
 
+"""
 def week_now(n=0):
 	time_now=datetime.datetime.now(pytz.timezone('Europe/London'))
 	monday = time_now - datetime.timedelta(days = time_now.weekday()-7*n)
@@ -43,6 +46,7 @@ def week_tests(n=0):
 	moday_zero = datetime.datetime(monday.year, monday.month, monday.day)
 	number=str(int(time.mktime(moday_zero.timetuple())))
 	return time_now,monday,moday_zero,number
+"""
 
 #поиск определенного значения по ключу name
 async def db_find_name(name):
@@ -91,15 +95,20 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 					pass
 
 			#поиск текущей недели в словаре (костыль, нужно будет переделать)
-			#week=int(datetime.datetime.utcnow().strftime('%V'))+n #номер недели
-			#for number, text in data.items():
-			#	if week == int(datetime.datetime.fromtimestamp(int(number)).strftime('%V')):
-			#		mess=text
-			week=week_now(n)
-			if data.get(week)!=None:
-				mess=data.get(week)
-
-	await event.answer(message=mess+"\n"+str(week_tests()))
+			week=int(datetime.datetime.utcnow().strftime('%V'))+n-1 #номер недели
+			for number, text in data.items():
+				if week == int(datetime.datetime.fromtimestamp(int(number)).strftime('%V')):
+					mess=text
+			
+			"""			
+						#заменить time.mktime на calendar.timegm в парсере
+						week=week_now(n)
+						if data.get(week)!=None:
+							mess=data.get(week)
+	mess+"\n"+str(week_tests())
+			"""					
+	
+	await event.answer(message=mess)
 
 
 
