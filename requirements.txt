@@ -8,6 +8,7 @@ motor==2.3.1
 multidict==5.1.0
 pydantic==1.8.1
 pymongo==3.11.3
+pytz==2021.1
 typing-extensions==3.7.4.3
 vkwave==0.2.10
 yarl==1.6.3
