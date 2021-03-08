@@ -14,19 +14,17 @@ import motor.motor_asyncio
 #for initialize storage
 import asyncio
 
+#инициалицазия mongodb
+client = motor.motor_asyncio.AsyncIOMotorClient(mongo_url)
+#инициализация бота
+bot = SimpleLongPollBot(tokens=token, group_id = group_id)
+
 #find in database key with name
-async def db_find_one(name):
-	mongo_url = await storage.get(Key("MONGO_URL"))
-	client = motor.motor_asyncio.AsyncIOMotorClient(mongo_url)
+async def db_find_name(name):
 	db = client['DB']
 	collection = db['rasp']
 	values = await collection.find_one({'name': name})
 	return values 
-
-
-
-#инициализация бота
-bot = SimpleLongPollBot(tokens=token, group_id = group_id)
 
 #начать
 @bot.message_handler(bot.text_contains_filter("начать") | bot.text_contains_filter("start"))
@@ -56,7 +54,7 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 		#проверяем первый аргумент (имя)
 		ALL=await storage.get(Key("ALL"))
 		if ALL.get(args[0])!=None:
-			data = await db_find_one(args[0])
+			data = await db_find_name(args[0])
 			data=data.get('text')
 			
 			#проверяем второй аргумент (число)
@@ -73,7 +71,7 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 				if week == int(datetime.datetime.fromtimestamp(int(number)).strftime('%V')):
 					mess=text
 
-	await event.answer(message=mess+"\n")
+	await event.answer(message=mess)
 
 
 
