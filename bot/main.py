@@ -1,5 +1,6 @@
-#config
-from config import *
+#for working; create .env file with TOKEN_VK, GROUP_ID, MONGO_URL
+#import not_prod
+
 #for vk bot
 from vkwave.bots import SimpleLongPollBot
 #keyboard
@@ -15,8 +16,9 @@ import datetime
 #import time
 #import pytz
 
-#for db
-import motor.motor_asyncio
+import os
+from db import *
+from storage import *
 
 
 """
@@ -28,10 +30,9 @@ TODO:
 -!сделать пост уведомления об изменении
 """
 
-#инициалицазия mongodb
-client = motor.motor_asyncio.AsyncIOMotorClient(mongo_url)
+
 #инициализация бота
-bot = SimpleLongPollBot(tokens=token, group_id = group_id)
+bot = SimpleLongPollBot(tokens=os.environ.get('TOKEN_VK'), group_id = os.environ.get('GROUP_ID'))
 
 """
 def week_now(n=0):
@@ -48,29 +49,6 @@ def week_tests(n=0):
 	number=str(int(time.mktime(moday_zero.timetuple())))
 	return time_now,monday,moday_zero,number
 """
-#поиск определенного значения по ключу name
-async def do_find_all_names(db="DB",collection="rasp"):
-	db = client[db]
-	collection = db[collection]
-	all_names=[]
-	async for document in collection.find({}):
-		all_names.append(document['name'])
-	return all_names
-
-
-#Хранилице данных, которые берутся несколько раз
-storage = Storage()
-async def initialize_storage():
-	all_dict = Key("ALL")
-	ALL= await do_find_all_names()
-	await storage.put(all_dict, ALL)
-
-#поиск определенного значения по ключу name
-async def db_find_name(name, db="DB",collection="rasp"):
-	db = client[db]
-	collection = db[collection]
-	values = await collection.find_one({'name': name})
-	return values 
 
 #начать
 @bot.message_handler(bot.text_contains_filter("начать"))
