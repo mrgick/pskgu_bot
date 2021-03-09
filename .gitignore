@@ -8,10 +8,6 @@ __pycache__/
 # C extensions
 *.so
 
-#my
-db-pskgu/
-config_0.py
-
 # Distribution / packaging
 .Python
 build/
