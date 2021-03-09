@@ -1,5 +1,5 @@
-#for working; create .env file with TOKEN_VK, GROUP_ID, MONGO_URL
-#import not_prod
+#for programming; create.env file with TOKEN_VK, GROUP_ID, MONGO_URL
+import not_prod
 
 #for vk bot
 from vkwave.bots import SimpleLongPollBot
