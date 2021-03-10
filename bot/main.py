@@ -18,7 +18,7 @@ import googletrans
 #import pytz
 
 import os
-from db import *
+from db import db_find_name, do_find_all_names, do_find_all_subs, do_insert_user_id, del_user_id
 from storage import *
 
 
@@ -139,7 +139,7 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 		message="вы не указали аргумент(имя)"       
 	await event.answer(message=message)
 
-"""
+
 #реализовать рассылку!
 async def send_message(message,user_id):
 	await  bot.api_context.messages.send(message=message,random_id=0,user_id=user_id)
@@ -154,15 +154,59 @@ async def subcribe(event: bot.SimpleBotEvent) -> str:
 		#проверяем правильно ли введено имя
 		if args[0] in all_names:
 			user_id=event.object.object.message.peer_id
-			message=str(user_id)
+			subs= await storage.get(Key('SUBS'))
+			#надо будет переделать, но пока так
+			k=0#для ветвления
+			n=-1
+			i=0
+			while i<len(subs):
+				if args[0]==subs[i].get('name'):
+					n=i
+				if user_id in subs[i].get('list'):
+					message = "вы уже подписаны на "+subs[i].get('name')
+					k=1
+				i=i+1
+			if k==0:
+				result = await do_insert_user_id(args[0],user_id)
+				if subs !=[] and n!=-1:
+					subs[n]=result
+					print(subs)
+				else:
+					subs.append(result)
+				await storage.put(Key('SUBS'),subs)
+				message="теперь вы подписаны"
+				
+
 		else:
 			message="данное имя не найдено в бд, проверьте правильность ввода"
 	else:
 		message="введите имя(группу или преподавателя), на которую хотите подписаться"
-	await event.answer(message=)
-"""
+	await event.answer(message=message)
+
+#отписаться
+@bot.message_handler(bot.command_filter(commands=("отписаться", "unsubscribe"), prefixes=("/")))
+async def subcribe(event: bot.SimpleBotEvent) -> str:
+	user_id=event.object.object.message.peer_id
+	subs= await storage.get(Key('SUBS'))
+	k=0
+	i=0
+	while i<len(subs):
+		if user_id in subs[i].get('list'):
+			result = await del_user_id(subs[i].get('name'),user_id)
+			message = "теперь вы отписаны от "+subs[i].get('name')
+			subs[i]=result
+			print(subs)
+			await storage.put(Key('SUBS'),subs)
+			i=len(subs)
+			k=1
+		i=i+1
+
+	if k==0:
+		message="вы не подписаны на уведомления"
+	await event.answer(message=message)
+
 if __name__=="__main__":
 	asyncio.get_event_loop().run_until_complete(initialize_storage())
-	#asyncio.get_event_loop().run_until_complete(post_wall("тест",74091241))
+	print(2)
 	bot.run_forever()
 
