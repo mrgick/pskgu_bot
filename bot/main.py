@@ -1,5 +1,5 @@
 #for programming; create.env file with TOKEN_VK, GROUP_ID, MONGO_URL
-import not_prod
+#import not_prod
 
 #for vk bot
 from vkwave.bots import SimpleLongPollBot
@@ -12,7 +12,8 @@ from vkwave.bots.storage.types import Key
 import asyncio
 #for time
 import datetime
-
+#for translations
+import googletrans
 #import time
 #import pytz
 
@@ -66,7 +67,7 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 	mess="общий вид команды:\n/показать(или /show)  имя (группа или человек)  неделя (по умолчанию стоит текущая, +1 -> след., а -1 -> пред.)\n\nпример команды: \n/показать 0431-06 +1\n(даная команда покажет следующую неделю группы 0431-06)"
 	await event.answer(message=mess)
 
-#вывод недели	
+#вывод недели   
 @bot.message_handler(bot.command_filter(commands=("show", "показать"), prefixes=("/")))
 async def handle(event: bot.SimpleBotEvent) -> str:
 	
@@ -90,19 +91,31 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 					pass
 
 			#поиск текущей недели в словаре (костыль, нужно будет переделать)
-			week=int(datetime.datetime.utcnow().strftime('%V'))+n-1 #номер недели
+			week=int(datetime.datetime.utcnow().strftime('%V'))+n #номер недели
 			for number, text in data.items():
 				if week == int(datetime.datetime.fromtimestamp(int(number)).strftime('%V')):
 					mess=text
 			mess="Имя: "+args[0]+"; Неделя: "+str(week)+"\n"+mess
 			
-			"""			
+			#проверка 3 аргумента
+			if len(args)>2:
+				#перевод
+				if googletrans.LANGUAGES.get(args[2])!=None:
+					try:
+						mess = googletrans.Translator().translate('Перевод может содержать ошибки.\n'+mess,src="ru",dest=args[2]).text
+					except Exception as e:
+						print(e)
+						mess = 'Sorry, translation failed. Please try again later.'
+
+			
+
+			"""         
 						#заменить time.mktime на calendar.timegm в парсере
 						week=week_now(n)
 						if data.get(week)!=None:
 							mess=data.get(week)
 	mess+"\n"+str(week_tests())
-			"""					
+			"""                 
 	await event.answer(message=mess)
 
 
@@ -123,12 +136,17 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 				message=message[0:message.rfind('\n')]
 				break
 	else:
-		message="вы не указали аргумент(имя)"		
-	await event.answer(message=message)
+		message="вы не указали аргумент(имя)"       
+	await event.answer(message=message,random_id=0)
 
+
+#реализовать рассылку!
+async def post_wall(user_id):
+	await  bot.api_context.messages.send(message="a",random_id=0,user_id=user_id)
 
 
 if __name__=="__main__":
 	asyncio.get_event_loop().run_until_complete(initialize_storage())
+	asyncio.get_event_loop().run_until_complete(post_wall(74091241))
 	bot.run_forever()
 
