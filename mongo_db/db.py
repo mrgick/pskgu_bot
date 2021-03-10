@@ -1,6 +1,6 @@
 import os
 import motor.motor_asyncio
-#import not_prod
+
 #инициалицазия mongodb
 client = motor.motor_asyncio.AsyncIOMotorClient(os.environ.get('MONGO_URL'))
 
@@ -54,7 +54,7 @@ async def del_user_id(name,user_id):
 			pass
 		r = await collection.update_one({"name":name},{'$set':{'list':data}})
 		return {"name":name,'list':data}
-
+"""
 #для проверки
 async def test():
 	#res = await del_user_id("0431-05",74091241)
@@ -70,4 +70,4 @@ if __name__=="__main__":
 	import asyncio
 	loop = asyncio.get_event_loop()
 	loop.run_until_complete(test())
-	
+"""
