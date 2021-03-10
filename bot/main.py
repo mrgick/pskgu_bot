@@ -104,7 +104,7 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 					try:
 						mess = googletrans.Translator().translate('Перевод может содержать ошибки.\n'+mess,src="ru",dest=args[2]).text
 					except Exception as e:
-						print(e)
+						#print(e)
 						mess = 'Sorry, translation failed. Please try again later.'
 
 			
@@ -137,16 +137,32 @@ async def handle(event: bot.SimpleBotEvent) -> str:
 				break
 	else:
 		message="вы не указали аргумент(имя)"       
-	await event.answer(message=message,random_id=0)
+	await event.answer(message=message)
 
-
+"""
 #реализовать рассылку!
-async def post_wall(user_id):
-	await  bot.api_context.messages.send(message="a",random_id=0,user_id=user_id)
+async def send_message(message,user_id):
+	await  bot.api_context.messages.send(message=message,random_id=0,user_id=user_id)
 
-
+#подписаться
+@bot.message_handler(bot.command_filter(commands=("подписаться", "subscribe"), prefixes=("/")))
+async def subcribe(event: bot.SimpleBotEvent) -> str:
+	args = event.object.object.message.text.split()[1:]
+	#проверяем первый аргумент
+	if len(args)>0:
+		all_names = await storage.get(Key("ALL"))
+		#проверяем правильно ли введено имя
+		if args[0] in all_names:
+			user_id=event.object.object.message.peer_id
+			message=str(user_id)
+		else:
+			message="данное имя не найдено в бд, проверьте правильность ввода"
+	else:
+		message="введите имя(группу или преподавателя), на которую хотите подписаться"
+	await event.answer(message=)
+"""
 if __name__=="__main__":
 	asyncio.get_event_loop().run_until_complete(initialize_storage())
-	asyncio.get_event_loop().run_until_complete(post_wall(74091241))
+	#asyncio.get_event_loop().run_until_complete(post_wall("тест",74091241))
 	bot.run_forever()
 
