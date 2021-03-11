@@ -43,10 +43,9 @@ async def subcribe(event: SimpleBotEvent) -> str:
 				else:
 					subs.append(result)
 				await storage.put(Key('SUBS'),subs)
-				message="Теперь вы подписаны."
-				#print(subs)
+				message="Теперь вы подписаны на "+args[0]+"."
 		else:
-			message="Данное имя не найдено в бд, проверьте правильность ввода."
+			message="Данное имя:"+args[0]+" не найдено в бд, проверьте правильность ввода."
 	else:
 		message="Введите имя(группу или преподавателя), на которую хотите подписаться."
 	await event.answer(message=message)
@@ -64,7 +63,6 @@ async def subcribe(event: SimpleBotEvent) -> str:
 			await storage.put(Key('SUBS'),subs)
 			message = "Теперь вы отписаны от "+x.get('name')+"."
 			user_not_in_list=False
-			#print(subs)
 			break
 	if user_not_in_list:
 		message="Вы не подписаны на уведомления."
