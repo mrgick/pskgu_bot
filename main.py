@@ -1,8 +1,4 @@
 import os
-#для разработки
-if os.environ.get('TOKEN_VK')==None:
-	import utils.not_prod
-
 from vkwave.bots import SimpleLongPollBot
 
 #для хранилища
