@@ -5,14 +5,14 @@ import motor.motor_asyncio
 client = motor.motor_asyncio.AsyncIOMotorClient(os.environ.get('MONGO_URL'))
 
 #поиск определенного значения по ключу name
-async def db_find_name(name,col="rasp"):
+async def db_find_name(name, col="rasp"):
 	collection = client["DB"][col]
 	return await collection.find_one({'name': name}) 
 
 #вывод из бд всех имен
-async def do_find_all_names(col="rasp",name='name'):
+async def do_find_all_names(name='name', col="rasp"):
 	collection = client["DB"][col]
-	all_names=[]
+	all_names = []
 	async for document in collection.find({}):
 		all_names.append(document[name])
 	return all_names
@@ -20,37 +20,37 @@ async def do_find_all_names(col="rasp",name='name'):
 #вывод из бд всех имен
 async def do_find_all_subs():
 	collection = client["DB"]['updates']
-	all_names=[]
+	all_names = []
 	async for document in collection.find({}):
 		all_names.append({'name':document['name'],'list':document['list']})
 	return all_names
 
 #вставка user_id в бд(для рассылки)
-async def do_insert_user_id(name,user_id):
+async def do_insert_user_id(name, user_id):
 	collection = client["DB"]["updates"]
 	#создаем документ, если его нет
-	data=await collection.find_one({"name":name})
+	data = await collection.find_one({"name":name})
 	if data == None:
 		await collection.insert_one({"name":name,'list':[user_id]})
 		return {"name":name,'list':[user_id]}
 	else:
-		data=data.get('list')
+		data = data.get('list')
 		data.append(user_id)
-		r = await collection.update_one({"name":name},{'$set':{'list':data}})
+		await collection.update_one({"name":name},{'$set':{'list':data}})
 		return {"name":name,'list':data}
 
 #удаление user_id из бд(для рассылки)
-async def del_user_id(name,user_id):
+async def del_user_id(name, user_id):
 	collection = client["DB"]["updates"]
-	#создаем документ, если его нет
-	data=await collection.find_one({"name":name})
+	#проверяем есть ли документ в бд
+	data = await collection.find_one({"name":name})
 	if data == None:
 		return {}
 	else:
-		data=data.get('list')
+		data = data.get('list')
 		try:
 			data.remove(user_id)
 		except:
 			pass
-		r = await collection.update_one({"name":name},{'$set':{'list':data}})
+		await collection.update_one({"name":name},{'$set':{'list':data}})
 		return {"name":name,'list':data}
