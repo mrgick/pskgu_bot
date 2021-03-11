@@ -54,20 +54,3 @@ async def del_user_id(name,user_id):
 			pass
 		r = await collection.update_one({"name":name},{'$set':{'list':data}})
 		return {"name":name,'list':data}
-"""
-#для проверки
-async def test():
-	#res = await del_user_id("0431-05",74091241)
-	#print(res)
-	#res=await do_insert_user_id("0431-04",3)
-	#print(res)
-	a=await do_find_all_subs()
-	print(a)
-	#{'name':'users'}
-
-if __name__=="__main__":
-	
-	import asyncio
-	loop = asyncio.get_event_loop()
-	loop.run_until_complete(test())
-"""

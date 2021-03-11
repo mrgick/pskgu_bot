@@ -1,8 +1,13 @@
 from vkwave.bots.storage.types import Key
-#заставляем увидеть mongo_db и storage
 
-import sys
-sys.path.append('../')
+"""
+Для истории:
+Старый способ увидеть другой каталог.
+#import sys
+#sys.path.append('../')
+Новый - установить переменную окружения PYTHONPATH
+"""
+
 from utils.storage import storage,initialize_storage
 
 async def test():

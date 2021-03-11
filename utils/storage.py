@@ -1,9 +1,5 @@
 from vkwave.bots.storage.storages import Storage
 from vkwave.bots.storage.types import Key
-#заставляем увидеть mongo_db
-import sys
-sys.path.append('../')
-
 from mongo_db.db import do_find_all_names, do_find_all_subs
 
 #Хранилице данных, которые берутся несколько раз

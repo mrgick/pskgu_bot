@@ -6,9 +6,6 @@ from vkwave.bots import (
 )
 #for storage
 from vkwave.bots.storage.types import Key
-#заставляем увидеть mongo_db и storage
-import sys
-sys.path.append('../')
 from utils.storage import storage
 from mongo_db.db import db_find_name
 #for translations
