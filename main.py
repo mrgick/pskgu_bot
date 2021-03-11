@@ -5,20 +5,24 @@ import asyncio
 from utils.storage import storage, initialize_storage
 from utils.parser import parser
 from blueprints import (
-	begin_router,
-	help_router,
+	begin_and_help_router,
 	week_router,
 	subscription_router
 )
-
+"""
+TODO:
+-переделать /help
+-переделать подписку
+-внедрить парсер
+-сделать тесты
+"""
 #инициализация бота
 bot = SimpleLongPollBot(tokens=os.environ.get('TOKEN_VK'), group_id = os.environ.get('GROUP_ID'))
 
 #наши роутеры
 bot.dispatcher.add_router(subscription_router)
 bot.dispatcher.add_router(week_router)
-bot.dispatcher.add_router(help_router)
-bot.dispatcher.add_router(begin_router)
+bot.dispatcher.add_router(begin_and_help_router)
 
 
 
