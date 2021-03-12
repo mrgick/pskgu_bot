@@ -1,9 +1,4 @@
-import os
-import motor.motor_asyncio
-
-#инициалицазия mongodb
-client = motor.motor_asyncio.AsyncIOMotorClient(os.environ.get('MONGO_URL'))
-
+from config import client
 #поиск определенного значения по ключу name
 async def db_find_name(name, col="rasp"):
 	collection = client["DB"][col]
@@ -53,3 +48,16 @@ async def del_user_id(name, user_id):
 			data.remove(user_id)
 			await collection.update_one({"name":name},{'$set':{'list':data}})
 		return {"name":name,'list':data}
+
+#получаем, либо вставляем хеш главной страницы
+async def hash_main_page(hash_page="0",insert=False):
+	collection = client["DB"]["update_page"]
+	data = await collection.find_one({"page":"main"})
+	if data == None:
+		await collection.insert_one({"page":"main"},{'hash':hash_page})
+		return hash_page
+	if insert:
+			await collection.update_one({"page":"main"},{'$set':{'hash':hash_page}})
+	else:
+		hash_page=data.get('hash')
+	return hash_page

@@ -7,7 +7,7 @@ from vkwave.bots import (
 #for storage
 from vkwave.bots.storage.types import Key
 from utils.storage import storage
-from mongo_db.db import do_insert_user_id, del_user_id
+from utils.web_db import do_insert_user_id, del_user_id
 
 subscription_router = DefaultRouter()
 

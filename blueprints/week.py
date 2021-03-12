@@ -7,7 +7,7 @@ from vkwave.bots import (
 #for storage
 from vkwave.bots.storage.types import Key
 from utils.storage import storage
-from mongo_db.db import db_find_name
+from utils.web_db import db_find_name
 #for translations
 import googletrans
 #for time

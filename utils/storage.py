@@ -1,6 +1,6 @@
 from vkwave.bots.storage.storages import Storage
 from vkwave.bots.storage.types import Key
-from mongo_db.db import do_find_all_names, do_find_all_subs
+from utils.web_db import do_find_all_names, do_find_all_subs
 
 #Хранилице данных, которые берутся несколько раз
 storage=Storage()
