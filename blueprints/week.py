@@ -36,7 +36,9 @@ async def handle(event: SimpleBotEvent) -> str:
 					n=int(args[1])
 				except:
 					pass
+
 			#поиск текущей недели в словаре (костыль, нужно будет переделать)
+			message="Ошибка"
 			week=int(datetime.datetime.utcnow().strftime('%V'))+n #номер недели
 			for number, text in data.items():
 				if week == int(datetime.datetime.fromtimestamp(int(number)).strftime('%V')):
