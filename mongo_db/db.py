@@ -35,8 +35,9 @@ async def do_insert_user_id(name, user_id):
 		return {"name":name,'list':[user_id]}
 	else:
 		data = data.get('list')
-		data.append(user_id)
-		await collection.update_one({"name":name},{'$set':{'list':data}})
+		if user_id in data==False:
+			data.append(user_id)
+			await collection.update_one({"name":name},{'$set':{'list':data}})
 		return {"name":name,'list':data}
 
 #удаление user_id из бд(для рассылки)
@@ -48,9 +49,7 @@ async def del_user_id(name, user_id):
 		return {}
 	else:
 		data = data.get('list')
-		try:
+		if user_id in data:
 			data.remove(user_id)
-		except:
-			pass
-		await collection.update_one({"name":name},{'$set':{'list':data}})
+			await collection.update_one({"name":name},{'$set':{'list':data}})
 		return {"name":name,'list':data}

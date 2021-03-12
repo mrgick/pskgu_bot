@@ -28,18 +28,18 @@ async def subcribe(event: SimpleBotEvent) -> str:
 			user_id = event.object.object.message.peer_id
 			subs = await storage.get(Key('SUBS'))
 			do_insert=True
-			n=-1
+			index_number=-1
 			for x in subs:
 				if args[0] == x.get('name'):
-					n=subs.index(x)
+					index_number=subs.index(x)
 				if user_id in x.get('list'):
 					message = "Вы уже подписаны на "+x.get('name')+"."
 					do_insert=False
 			#делаем вставку
 			if do_insert:
 				result = await do_insert_user_id(args[0],user_id)
-				if subs!=[] and n!=-1:
-					subs[n]=result
+				if subs!=[] and index_number!=-1:
+					subs[index_number]=result
 				else:
 					subs.append(result)
 				await storage.put(Key('SUBS'),subs)
