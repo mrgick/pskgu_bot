@@ -35,7 +35,7 @@ async def do_insert_user_id(name, user_id):
 		return {"name":name,'list':[user_id]}
 	else:
 		data = data.get('list')
-		if user_id in data==False:
+		if user_id not in data:
 			data.append(user_id)
 			await collection.update_one({"name":name},{'$set':{'list':data}})
 		return {"name":name,'list':data}

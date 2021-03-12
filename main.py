@@ -24,6 +24,9 @@ bot.dispatcher.add_router(subscription_router)
 bot.dispatcher.add_router(week_router)
 bot.dispatcher.add_router(begin_and_help_router)
 
+#реализовать рассылку!
+async def send_message(message,user_id):
+	await  bot.api_context.messages.send(message=message,random_id=0,user_id=user_id)
 
 
 if __name__=="__main__":

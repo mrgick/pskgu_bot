@@ -12,11 +12,12 @@ from utils.storage import storage,initialize_storage
 
 async def test():
 	#проверка ALL
-	all_names = await storage.get(Key("ALL"))
+	all_names = await storage.get(Key("SUBS"))
 	print("1):",all_names)
-	await storage.put(Key("ALL"),[])
-	all_names = await storage.get(Key("ALL"))
-	print("2)",all_names)
+
+	#await storage.put(Key("ALL"),[])
+	#all_names = await storage.get(Key("ALL"))
+	#print("2)",all_names)
 
 
 if __name__=="__main__":
