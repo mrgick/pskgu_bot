@@ -1,5 +1,4 @@
 import asyncio
-#для хранилища
 from utils.storage import initialize_storage
 from utils.parser import parser
 from blueprints import (
@@ -11,12 +10,12 @@ from config import bot
 """
 TODO:
 -переделать /help
--переделать подписку
--внедрить парсер
+-переделать парсер (рефакторинг и добавление преподователей)
+-добавить ical
 -сделать тесты
 """
 
-#наши роутеры
+#наши роутеры(события)
 bot.dispatcher.add_router(subscription_router)
 bot.dispatcher.add_router(week_router)
 bot.dispatcher.add_router(begin_and_help_router)
