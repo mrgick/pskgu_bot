@@ -11,7 +11,7 @@ import rasp.generate_route
 import rasp.db
 
 rasp.generate_route.semaphore = asyncio.Semaphore(10)
-
+test=True
 #отправка сообщения определенному пользователю
 async def send_message(message,user_id):
 	await bot.api_context.messages.send(message=message,peer_id=user_id,random_id=0)

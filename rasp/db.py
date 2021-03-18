@@ -127,6 +127,7 @@ class Schedule:
 
     async def push(self, name, page_hash):
         async with asyncio.Lock():
+
             name=name.replace(" ","_")
             name=name[0:20]
 
@@ -141,7 +142,7 @@ class Schedule:
                   days_new=days_new+days_name[number_day]+"\n"
                   days_text=y.get("classes")
                   for z in days_text:
-                      dn=str(z.get("idx"))
+                      dn=str(z.get("idx")+1)
                       dv=z.get("desc")
                       days_new=days_new+dn+")"+dv+"\n"
                   days_new=days_new+"\n"
@@ -151,7 +152,8 @@ class Schedule:
             data_base_dict.append({
                 "name":name,
                 "hash": page_hash,
-                "text": weeks_new
+                "text": weeks_new,
+                "week_range": self.week_range
             })
 
 

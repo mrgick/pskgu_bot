@@ -12,6 +12,7 @@ from utils.web_db import db_find_name
 import googletrans
 #for time
 import datetime
+import calendar
 
 
 week_router = DefaultRouter()
@@ -28,7 +29,6 @@ async def handle(event: SimpleBotEvent) -> str:
 		#проверяем первый аргумент (имя)
 		if (args[0] in all_names)==True:
 			data = await db_find_name(args[0])
-			data = data.get('text')
 			n = 0
 			#проверяем второй аргумент (число)
 			if len(args) > 1:
@@ -38,11 +38,22 @@ async def handle(event: SimpleBotEvent) -> str:
 					pass
 
 			#поиск текущей недели в словаре (костыль, нужно будет переделать)
-			message="Ошибка"
+			message="Нет данных\n"
 			week=int(datetime.datetime.utcnow().strftime('%V'))+n #номер недели
-			for number, text in data.items():
-				if week == int(datetime.datetime.fromtimestamp(int(number)).strftime('%V')):
-					message=text
+			number=data.get('week_range')[0][0]
+			print(number)
+			tmtuple=datetime.datetime.utcnow().timetuple()
+			cur_week_time = 604800*n+calendar.timegm((tmtuple.tm_year, tmtuple.tm_mon, tmtuple.tm_mday - tmtuple.tm_wday, 0, 0, 0, 0, 0, 0))
+
+			i=0
+			while i<len(data.get('text')):
+				if cur_week_time >= number and cur_week_time <= (number+604800):
+					message = data.get('text')[i+1].get(str(i+1))
+					break
+				else:
+					number=number+604800
+					i=i+1
+
 			message="Имя: "+args[0]+"; Неделя: "+str(week)+"\n"+message
 			#проверка 3 аргумента
 			if len(args) > 2:
