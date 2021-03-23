@@ -51,6 +51,7 @@ async def parser():
 			await asyncio.sleep(300)
 		except Exception as e:
 			print(e)
+			await asyncio.sleep(300)
 
 #Асинхронно получает страницу и её хеш.
 async def get_page(full_url="http://rasp.pskgu.ru/"):
