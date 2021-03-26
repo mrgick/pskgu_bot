@@ -64,8 +64,8 @@ async def generate_by_regex(parent, anchor, regex=0, prefix=""):
     if regex == 0:
         regex = [
             [r"(.*ОФО.*)", "ОФО", generate_st_and_tch],
-            #[r"(.*ЗФО.*)", "ЗФО", generate_st_and_tch],
-            #[r"(.*препод.*)", "преподователь", generate_st_and_tch]
+            [r"(.*ЗФО.*)", "ЗФО", generate_st_and_tch],
+            [r"(.*препод.*)", "преподователь", generate_st_and_tch]
         ]
     elif regex == 1:
         regex = [
