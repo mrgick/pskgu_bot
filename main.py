@@ -4,6 +4,7 @@ import io
 import json
 import time
 import asyncio
+import os
 
 def main():
     t0 = time.time()
@@ -15,9 +16,10 @@ def main():
     logger.info("Parser has been finished. %f seconds elapsed." % (time.time() - t0))
     
     #from parser_module.db import data_base_dict
+    os.mkdir("logs")
     with io.open("logs/page.txt", "w") as f:
         f.write(json.dumps(parser.data_base_dict, indent=2, ensure_ascii=False))
-    print(len(parser.data_base_dict))
+    #print(len(parser.data_base_dict))
 
 if __name__=="__main__":
     main()
