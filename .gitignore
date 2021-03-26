@@ -9,7 +9,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
-logs/
+/logs/
 .Python
 build/
 develop-eggs/
