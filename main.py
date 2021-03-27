@@ -16,7 +16,8 @@ def main():
     logger.info("Parser has been finished. %f seconds elapsed." % (time.time() - t0))
     
     #from parser_module.db import data_base_dict
-    os.mkdir("logs")
+    if not os.path.exists("logs"):
+        os.mkdir("logs")
     with io.open("logs/page.txt", "w") as f:
         f.write(json.dumps(parser.data_base_dict, indent=2, ensure_ascii=False))
     #print(len(parser.data_base_dict))

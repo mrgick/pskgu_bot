@@ -14,7 +14,7 @@ class Anchor:
 def parse_urls(html):
     html = lxml.html.fromstring(html)
     return ((Anchor(str(x.xpath("@href")[0]), str(x.text_content())) for x in html.xpath(".//a")))
-
+    
 
 #нужно произвести refactoring нижних функций
 

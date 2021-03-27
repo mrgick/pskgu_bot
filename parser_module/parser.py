@@ -16,9 +16,8 @@ semaphore = asyncio.Semaphore(10)
 # Запускает парсер
 async def run(): 
     data_base_dict = []
-    root = routes.Route(None, "")
-    full_url = os.path.join(REMOTE_URL, root.url)
-    page, _ = await get_page(full_url)
+    root=routes.Route(None,"")
+    page = await get_page(REMOTE_URL)
     if page != None:
         await run_all_anchors(route=root, page=page, regex=0, prefix="")
     else:
@@ -39,23 +38,20 @@ async def get_page(url):
         async with aiohttp.ClientSession() as session:
             try:
                 async with session.get(url) as response:
+                    #нужна задержка, иначе сайт расписания умирает
+                    await asyncio.sleep(0.01)
+                    
                     html = await response.text()
-                    #для хеширования, нужна явная кодировка
-                    if html.find("charset=") == -1:
-                        page_hash = hashlib.sha1(html.encode("windows-1251")).hexdigest()
-                    else:
-                        page_hash = hashlib.sha1(html.encode("utf-8")).hexdigest()
-                    #!нужно сделать задержку, иначе сайт расписания умирает
                     html = html.replace("--!>", "-->")
                     html=html.replace("<tbody>","")
                     html=html.replace("</tbody>","")
                     #logger.debug("get url " + url)
-                    return (html, page_hash)
+                    return html
 
             except Exception as e:
                 logger.error("in get url " + url)
                 logger.error(str(e))
-                return (None, None)
+                return None
 
 
 # Обрабатывает ссылки, генерирует маршруты
@@ -84,12 +80,12 @@ async def generate_by_regex(parent, anchor, regex=0, prefix=""):
             # Проверяет узел на действительность.
             if route.valid:
                 full_url = os.path.join(REMOTE_URL, route.url)
-                page, page_hash = await get_page(full_url)
-                await item[2](route, page, page_hash, anchor.title, item[1])
+                page = await get_page(full_url)
+                await item[2](route, page, anchor.title, item[1])
 
 
 # Перебирает первые ссылки.
-async def generate_st_and_tch(route, page, page_hash, title, prefix):
+async def generate_st_and_tch(route, page, title, prefix):
     if prefix == "ОФО" or prefix == "ЗФО":
         regex=1
     else:
@@ -98,14 +94,20 @@ async def generate_st_and_tch(route, page, page_hash, title, prefix):
 
 
 # Генерирует институты.
-async def generate_inst(route, page, page_hash, title, prefix):
+async def generate_inst(route, page, title, prefix):
     await run_all_anchors(route=route, page=page, regex=2, prefix=prefix)
 
 
 # Генерирует расписание в готовом виде.
-async def generate_page_readble(route, page, page_hash, title, prefix):
-    logger.debug(prefix+" "+title+" "+page_hash)
+async def generate_page_readble(route, page, title, prefix):
+    
     try:
+        #для хеширования, нужна явная кодировка
+        if page.find("charset=") == -1:
+            page_hash = hashlib.sha1(page.encode("windows-1251")).hexdigest()
+        else:
+            page_hash = hashlib.sha1(page.encode("utf-8")).hexdigest()
+        
         weeks=parsing_page.parse_schedule(page)
         result={
             "name":title.replace(" ","_")[0:20],
@@ -114,5 +116,7 @@ async def generate_page_readble(route, page, page_hash, title, prefix):
         }
 
         data_base_dict.append(result)
+        #logger.debug(route.url_dir)
+        logger.debug(prefix+" "+title+" "+page_hash)
     except Exception as e:
         logger.error(e)
