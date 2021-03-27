@@ -7,7 +7,7 @@ import lxml.html
 # Узел маршрута.
 class Route:
 
-    def __init__(self, parent, url): 
+    def __init__(self, parent, url, prefix): 
         # Делает нормальный URL.
         url = url.replace("\\", "/")
         # Проверяет url на действительность.
@@ -19,6 +19,7 @@ class Route:
         self.parent = parent # Родительский узел
         self.url_dir = url # URL-директория
         self.url = url # URL
+        self.prefix = prefix
 
         if parent: # Наследование от родительского узла.
             url = os.path.join(parent.url_dir, url) # Наследуем url.
@@ -29,3 +30,6 @@ class Route:
                 self.url_dir = os.path.dirname(url)
             else:
                 self.url_dir = url
+                
+            if parent.prefix != "":
+                self.prefix = parent.prefix

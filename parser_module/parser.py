@@ -10,25 +10,25 @@ data_base_dict = []
 
 # Настройки парсера
 REMOTE_URL = "http://rasp.pskgu.ru"
-semaphore = asyncio.Semaphore(10)
+semaphore = asyncio.Semaphore(20)
 
 
 # Запускает парсер
 async def run(): 
     data_base_dict = []
-    root=routes.Route(None,"")
+    root=routes.Route(None,"", "")
     page = await get_page(REMOTE_URL)
     if page != None:
-        await run_all_anchors(route=root, page=page, regex=0, prefix="")
+        await run_all_anchors(route=root, page=page, regex=0)
     else:
         logger.critical("no urls on main page")
 
 
 # Такая конструкция очень много где повторялась, и я вынес её; p.s. нужно сменить имя.
-async def run_all_anchors(route, page, regex, prefix):
+async def run_all_anchors(route, page, regex):
     tasks = []
     for anchor in parsing_page.parse_urls(page):
-       tasks.append(asyncio.create_task(generate_by_regex(parent=route, anchor=anchor, regex=regex, prefix=prefix)))
+       tasks.append(asyncio.create_task(generate_by_regex(parent=route, anchor=anchor, regex=regex)))
     await asyncio.wait(tasks)
 
 
@@ -55,7 +55,7 @@ async def get_page(url):
 
 
 # Обрабатывает ссылки, генерирует маршруты
-async def generate_by_regex(parent, anchor, regex=0, prefix=""):
+async def generate_by_regex(parent, anchor, regex=0):
 
     if regex == 0:
         regex = [
@@ -65,41 +65,41 @@ async def generate_by_regex(parent, anchor, regex=0, prefix=""):
         ]
     elif regex == 1:
         regex = [
-            ["(.*)", prefix, generate_inst]
+            ["(.*)", parent.prefix, generate_inst]
         ]
     elif regex == 2:
         regex = [
-            ["(.*)", prefix, generate_page_readble]
+            ["(.*)", parent.prefix, generate_page_readble]
         ]
 
     for item in regex:
         m = re.match(item[0], anchor.title)
         if m:
             # Создаёт узел маршрута с URL, как у якоря.
-            route = routes.Route(parent, anchor.href)
+            route = routes.Route(parent, anchor.href, item[1])
             # Проверяет узел на действительность.
             if route.valid:
                 full_url = os.path.join(REMOTE_URL, route.url)
                 page = await get_page(full_url)
-                await item[2](route, page, anchor.title, item[1])
+                await item[2](route, page, anchor.title)
 
 
 # Перебирает первые ссылки.
-async def generate_st_and_tch(route, page, title, prefix):
-    if prefix == "ОФО" or prefix == "ЗФО":
+async def generate_st_and_tch(route, page, title):
+    if route.prefix == "ОФО" or route.prefix == "ЗФО":
         regex=1
     else:
         regex=2
-    await run_all_anchors(route=route, page=page, regex=regex, prefix=prefix)
+    await run_all_anchors(route=route, page=page, regex=regex)
 
 
 # Генерирует институты.
-async def generate_inst(route, page, title, prefix):
-    await run_all_anchors(route=route, page=page, regex=2, prefix=prefix)
+async def generate_inst(route, page, title):
+    await run_all_anchors(route=route, page=page, regex=2)
 
 
 # Генерирует расписание в готовом виде.
-async def generate_page_readble(route, page, title, prefix):
+async def generate_page_readble(route, page, title):
     
     try:
         #для хеширования, нужна явная кодировка
@@ -108,6 +108,9 @@ async def generate_page_readble(route, page, title, prefix):
         else:
             page_hash = hashlib.sha1(page.encode("utf-8")).hexdigest()
         
+        prefix = [route.prefix, route.url_dir]
+
+
         weeks=parsing_page.parse_schedule(page)
         result={
             "name":title.replace(" ","_")[0:20],
@@ -116,7 +119,6 @@ async def generate_page_readble(route, page, title, prefix):
         }
 
         data_base_dict.append(result)
-        #logger.debug(route.url_dir)
-        logger.debug(prefix+" "+title+" "+page_hash)
+        logger.debug(prefix[0]+" "+prefix[1]+" "+title+" "+page_hash)
     except Exception as e:
         logger.error(e)
