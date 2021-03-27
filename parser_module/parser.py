@@ -115,7 +115,8 @@ async def generate_page_readble(route, page, title):
         result={
             "name":title.replace(" ","_")[0:20],
             "page_hash":page_hash,
-            "weeks":weeks,
+            "prefix":prefix,
+            "weeks":weeks
         }
 
         data_base_dict.append(result)
