@@ -23,7 +23,7 @@ async def handle(event: SimpleBotEvent) -> str:
 
     # Получаем время недели
     def week_time(n=0):
-        time_now = datetime.datetime.now(pytz.timezone("Europe/London"))
+        time_now = datetime.datetime.now(pytz.timezone("Europe/Dublin"))
         time_now = time_now + datetime.timedelta(days=-time_now.weekday(), weeks=n)
         year = int(time_now.strftime('%Y'))
         month = int(time_now.strftime('%m'))
@@ -47,7 +47,7 @@ async def handle(event: SimpleBotEvent) -> str:
                 week = week + "\n"
             return week
         else:
-            return "Данная неделя не найдена." + time
+            return "Данная неделя не найдена."
 
 
     #получаем аргументы 
@@ -69,7 +69,7 @@ async def handle(event: SimpleBotEvent) -> str:
             
             #получаем текст недели
             t=week_time(n)
-            time_now = datetime.datetime.now(pytz.timezone("Europe/London"))
+            time_now = datetime.datetime.now(pytz.timezone("Europe/Dublin"))
             message=readable_text(data,t) + str(time_now)
 
 
