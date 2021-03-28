@@ -44,7 +44,7 @@ async def handle(event: SimpleBotEvent) -> str:
             days_name={"1":"Понедельник", "2":"Вторник", "3":"Среда", "4":"Четверг", "5":"Пятница", "6":"Суббота", "7":"Воскресенье"}
             for day, value in text.items():
                 day_name = days_name.get(day)
-                day = 86400 * (int(day) - 1) + int(time)
+                day = 86400 * (int(day)) + int(time)
                 day = datetime.datetime.fromtimestamp(day).strftime('%Y.%m.%d')
                 week = week + str(day_name) + ", " + day + "\n"
                 for x, lesson  in value.items():
@@ -78,7 +78,7 @@ async def handle(event: SimpleBotEvent) -> str:
 
 
 
-            message="Имя: "+args[0]+""+"\n\n"+message +"\n" +str(t)
+            message="Имя: "+args[0]+""+"\n\n"+message +"\n"# +str(t)
             #проверка 3 аргумента
             if len(args) > 2:
                 #проверяем есть ли такой префикс языка
