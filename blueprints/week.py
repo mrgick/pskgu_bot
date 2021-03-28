@@ -12,7 +12,7 @@ from utils.web_db import db_find_name
 import googletrans
 #for time
 import datetime
-
+import pytz
 
 week_router = DefaultRouter()
 
@@ -23,7 +23,7 @@ async def handle(event: SimpleBotEvent) -> str:
 
     # Получаем время недели
     def week_time(n=0):
-        time_now = datetime.datetime.utcnow()
+        time_now = datetime.datetime.now(pytz.utc)
         time_now = time_now + datetime.timedelta(days=-time_now.weekday(), weeks=n)
         year = int(time_now.strftime('%Y'))
         month = int(time_now.strftime('%m'))
