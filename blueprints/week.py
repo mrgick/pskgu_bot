@@ -72,7 +72,7 @@ async def handle(event: SimpleBotEvent) -> str:
             #получаем текст недели
             t=week_time(n)
             time_now = datetime.datetime.now(pytz.timezone('Etc/GMT'))
-            message=readable_text(data,t) + time_now
+            message=readable_text(data,t) + str(time_now)
 
 
 
