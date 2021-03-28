@@ -47,7 +47,7 @@ async def handle(event: SimpleBotEvent) -> str:
                 week = week + "\n"
             return week
         else:
-            return "Данная неделя не найдена."
+            return "Данная неделя не найдена." + time
 
 
     #получаем аргументы 
