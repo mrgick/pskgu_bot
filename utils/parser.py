@@ -1,24 +1,21 @@
 import asyncio
 import hashlib
 import aiohttp
-from config import bot
-from utils.web_db import hash_main_page, rasp_insert
-#хранилище внутреннее
-from utils.storage import storage, initialize_storage
 from vkwave.bots.storage.types import Key
 
-import rasp.generate_route
-import rasp.db
+from config import bot, REMOTE_URL
+from utils.web_db import hash_main_page, rasp_insert
+from utils.storage import storage, initialize_storage
+from utils.log import logger
+from parser_module.parser import run_parser, data_base_dict
 
-rasp.generate_route.semaphore = asyncio.Semaphore(10)
-test=True
+#test=True
 #отправка сообщения определенному пользователю
 async def send_message(message,user_id):
 	await bot.api_context.messages.send(message=message,peer_id=user_id,random_id=0)
 
 #Для теста сделан парсер, в дальнейшем переделать
 async def parser():
-	url = "http://rasp.pskgu.ru/"
 	hash_db = await hash_main_page()
 
 	#for test
@@ -26,17 +23,18 @@ async def parser():
 	
 	while True:
 		try:
-			hash_now = await get_page(url)
+			hash_now = await get_page(REMOTE_URL)
 			if hash_now != hash_db:
 				hash_db = await hash_main_page(hash_now,insert=True)
 				
 				#парсер, запуск
-				rasp.db.data_base_dict=[]
-				await rasp.generate_route.generate_route()
+				await run_parser()
 
+				#!переписать вставку в бд и рассылку
 				#обрабатываем ответ парсера
-				updated_list = await rasp_insert(rasp.db.data_base_dict)
-				
+				updated_list = await rasp_insert(data_base_dict)
+				logger.info(updated_list)
+
 				#перезапускаем хранилище
 				await initialize_storage()
 
@@ -50,8 +48,8 @@ async def parser():
 
 			await asyncio.sleep(300)
 		except Exception as e:
-			print(e)
-			await asyncio.sleep(300)
+			logger.error(e)
+			await asyncio.sleep(1800)
 
 #Асинхронно получает страницу и её хеш.
 async def get_page(full_url="http://rasp.pskgu.ru/"):

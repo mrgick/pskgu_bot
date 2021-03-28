@@ -1,12 +1,15 @@
 from config import client
+db_name="DB"
+#! нужен рефакторинг кода
+
 #поиск определенного значения по ключу name
 async def db_find_name(name, col="rasp"):
-	collection = client["DB"][col]
+	collection = client[db_name][col]
 	return await collection.find_one({'name': name}) 
 
 #вывод из бд всех имен
 async def do_find_all_names(name='name', col="rasp"):
-	collection = client["DB"][col]
+	collection = client[db_name][col]
 	all_names = []
 	async for document in collection.find({}):
 		all_names.append(document[name])
@@ -14,15 +17,16 @@ async def do_find_all_names(name='name', col="rasp"):
 
 #вывод из бд всех имен
 async def do_find_all_subs():
-	collection = client["DB"]['updates']
+	collection = client[db_name]['updates']
 	all_names = []
 	async for document in collection.find({}):
 		all_names.append({'name':document['name'],'list':document['list']})
 	return all_names
 
+
 #вставка user_id в бд(для рассылки)
 async def do_insert_user_id(name, user_id):
-	collection = client["DB"]["updates"]
+	collection = client[db_name]["updates"]
 	#создаем документ, если его нет
 	data = await collection.find_one({"name":name})
 	if data == None:
@@ -37,7 +41,7 @@ async def do_insert_user_id(name, user_id):
 
 #удаление user_id из бд(для рассылки)
 async def del_user_id(name, user_id):
-	collection = client["DB"]["updates"]
+	collection = client[db_name]["updates"]
 	#проверяем есть ли документ в бд
 	data = await collection.find_one({"name":name})
 	if data == None:
@@ -49,9 +53,10 @@ async def del_user_id(name, user_id):
 			await collection.update_one({"name":name},{'$set':{'list':data}})
 		return {"name":name,'list':data}
 
+
 #получаем, либо вставляем хеш главной страницы
 async def hash_main_page(hash_page="0",insert=False):
-	collection = client["DB"]["update_page"]
+	collection = client[db_name]["update_page"]
 	data = await collection.find_one({"page":"main"})
 	if data == None:
 		await collection.insert_one({"page":"main"},{'hash':hash_page})
@@ -64,7 +69,7 @@ async def hash_main_page(hash_page="0",insert=False):
 
 #вставляем в бд расписание и получаем список обновленных
 async def rasp_insert(value):
-	collection = client["DB"]["rasp"]
+	collection = client[db_name]["rasp"]
 	updated_list=[]
 	for x in value:
 		data = await collection.find_one({"name":x.get("name")})
