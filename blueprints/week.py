@@ -78,7 +78,7 @@ async def handle(event: SimpleBotEvent) -> str:
 
 
 
-            message="Имя: "+args[0]+""+"\n\n"+message
+            message="Имя: "+args[0]+""+"\n\n"+message +"\n" +str(t)
             #проверка 3 аргумента
             if len(args) > 2:
                 #проверяем есть ли такой префикс языка
