@@ -69,7 +69,7 @@ async def handle(event: SimpleBotEvent) -> str:
             
             #получаем текст недели
             t=week_time(n)
-            message=readable_text(data,t)
+            message=readable_text(data,t) + t
 
 
 
