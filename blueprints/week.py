@@ -32,7 +32,7 @@ async def handle(event: SimpleBotEvent) -> str:
         day = int(time_now.strftime('%d'))
 
         wanted_time = tzone.localize(datetime.datetime(year, month, day))
-        timestamp = wanted_time.replace(tzinfo=None).timestamp()
+        timestamp = wanted_time.replace(tzinfo='Etc/GMT').timestamp()
         return str(timestamp).split(".")[0]
 
     # Преобразуем словарь недели в читаемый вид
