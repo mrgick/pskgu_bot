@@ -30,7 +30,7 @@ async def handle(event: SimpleBotEvent) -> str:
         month = int(time_now.strftime('%m'))
         day = int(time_now.strftime('%d'))
         wanted_time = datetime.datetime(year, month, day)
-        timestamp = wanted_time.replace(tzinfo=None).timestamp()
+        timestamp = datetime.datetime.timestamp(wanted_time)
         return str(timestamp).split(".")[0]
 
     # Преобразуем словарь недели в читаемый вид
