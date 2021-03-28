@@ -23,15 +23,17 @@ async def handle(event: SimpleBotEvent) -> str:
 
     # Получаем время недели
     def week_time(n=0):
+        tzone = pytz.timezone('Etc/GMT')
         time_now = datetime.datetime.now(pytz.timezone('Etc/GMT'))
+        
         time_now = time_now + datetime.timedelta(days=-time_now.weekday(), weeks=n)
         year = int(time_now.strftime('%Y'))
         month = int(time_now.strftime('%m'))
         day = int(time_now.strftime('%d'))
-        wanted_time = datetime.datetime(year, month, day)
-        wanted_time.replace(tzinfo=pytz.timezone('Etc/GMT'))
-        return str(datetime.datetime.timestamp(wanted_time)).split(".")[0]
 
+        wanted_time = tzone.localize(datetime.datetime(year, month, day))
+        timestamp = wanted_time.replace(tzinfo=None).timestamp()
+        return str(timestamp).split(".")[0]
 
     # Преобразуем словарь недели в читаемый вид
     def readable_text(arr,time):
