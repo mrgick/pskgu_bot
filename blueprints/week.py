@@ -23,7 +23,7 @@ async def handle(event: SimpleBotEvent) -> str:
 
     # Получаем время недели
     def week_time(n=0):
-        time_now = datetime.datetime.now(pytz.utc)
+        time_now = datetime.datetime.now(pytz.timezone("Europe/London"))
         time_now = time_now + datetime.timedelta(days=-time_now.weekday(), weeks=n)
         year = int(time_now.strftime('%Y'))
         month = int(time_now.strftime('%m'))
