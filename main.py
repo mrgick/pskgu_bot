@@ -10,7 +10,7 @@ def main():
     t0 = time.time()
     logger.info("Start parser")
     event_loop = asyncio.get_event_loop()
-    event_loop.run_until_complete(parser.run())
+    event_loop.run_until_complete(parser.run_parser())
     event_loop.close()    
     logger.info("Parser has been finished. %f seconds elapsed." % (time.time() - t0))
     

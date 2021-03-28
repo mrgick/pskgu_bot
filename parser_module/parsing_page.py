@@ -74,6 +74,8 @@ def arr_print(arr):
             day, month = int(m.group(1), 10), MONTH_NAMES[m.group(2).lower()]
             t = datetime.datetime(2021, month, day)
             name_time = str(datetime.datetime.timestamp(t))
+            if "." in name_time:
+              name_time = name_time.split(".")[0]
         except:
             continue
 
@@ -92,11 +94,11 @@ def arr_print(arr):
                         continue
                     else:
                         if x>=1:
-                            lessons.update({x:arr[k][i][x]})
+                            lessons.update({str(x):arr[k][i][x]})
                 
                 if lessons != {}:
-                    days.update({day:lessons})
+                    days.update({str(day):lessons})
             if days != {}:
-                data.update({name_time:days})
+                data.update({str(name_time):days})
     
     return data

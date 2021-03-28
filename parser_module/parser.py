@@ -12,7 +12,7 @@ semaphore = asyncio.Semaphore(20)
 
 
 # Запускает парсер
-async def run(): 
+async def run_parser(): 
     data_base_dict = []
     root=routes.Route(None,"", "")
     page = await get_page(REMOTE_URL)
@@ -121,6 +121,6 @@ async def generate_page_readble(route, page, title):
         }
 
         data_base_dict.append(result)
-        logger.debug(prefix[0]+" "+prefix[1]+" "+title+" "+page_hash)
+        logger.info(prefix[0]+" "+prefix[1]+" "+title+" "+page_hash)
     except Exception as e:
         logger.error(e)
