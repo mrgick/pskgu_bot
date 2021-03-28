@@ -1,5 +1,6 @@
 from parser_module import routes, parsing_page
 from utils.log import logger
+from config import REMOTE_URL
 import asyncio
 import aiohttp
 import os
@@ -7,9 +8,6 @@ import hashlib
 import re
 
 data_base_dict = []
-
-# Настройки парсера
-REMOTE_URL = "http://rasp.pskgu.ru"
 semaphore = asyncio.Semaphore(20)
 
 
@@ -26,10 +24,13 @@ async def run():
 
 # Такая конструкция очень много где повторялась, и я вынес её; p.s. нужно сменить имя.
 async def run_all_anchors(route, page, regex):
-    tasks = []
-    for anchor in parsing_page.parse_urls(page):
-       tasks.append(asyncio.create_task(generate_by_regex(parent=route, anchor=anchor, regex=regex)))
-    await asyncio.wait(tasks)
+    try:
+        tasks = []
+        for anchor in parsing_page.parse_urls(page):
+           tasks.append(asyncio.create_task(generate_by_regex(parent=route, anchor=anchor, regex=regex)))
+        await asyncio.wait(tasks)
+    except Exception as e:
+        logger.error(e)
 
 
 # Асинхронно получает страницу и её хеш.
@@ -50,7 +51,7 @@ async def get_page(url):
 
             except Exception as e:
                 logger.error("in get url " + url)
-                logger.error(str(e))
+                logger.error(e)
                 return None
 
 
