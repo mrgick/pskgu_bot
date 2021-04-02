@@ -9,10 +9,20 @@ class Anchor:
         self.href = href
         self.title = title
 
+def lxml_parce(html):
+    html = html.replace(b"--!>", b"-->")
+    html = html.replace(b"<tbody>",b"")
+    html = html.replace(b"</tbody>",b"")
+    if html.find(b"charset=") == -1:
+        myparser = lxml.html.HTMLParser(encoding='windows-1251')
+        return lxml.html.fromstring(html,parser=myparser)
+    else:
+        return lxml.html.fromstring(html)
+            
 
 # Парсит ссылки со страницы; в дальнейшем называются якорями
 def parse_urls(html):
-    html = lxml.html.fromstring(html)
+    html = lxml_parce(html)
     return ((Anchor(str(x.xpath("@href")[0]), str(x.text_content())) for x in html.xpath(".//a")))
     
 
@@ -20,18 +30,18 @@ def parse_urls(html):
 
 # Парсит расписание.
 def parse_schedule(html):
-    html = lxml.html.fromstring(html)
+    html = lxml_parce(html)
     i = 0
-    data={}
+    data = {}
 
     for table in html.xpath("/html/body/table"):
-        c=[]
+        c = []
         #print(table.text_content())
         for tr in table.xpath("tr"):
             #print(tr.text_content())
-            d=[]
+            d = []
             for td in tr.xpath('td'):
-                text=td.text_content().replace("\r\n","").replace("\n"," ").replace("_"," ")
+                text = td.text_content().replace("\r\n","").replace("\n"," ").replace("_"," ")
                 d.append(text)
             c.append(d)
         data.update({i:c})

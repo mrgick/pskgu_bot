@@ -67,17 +67,16 @@ async def hash_main_page(hash_page="0",insert=False):
 		hash_page=data.get('hash')
 	return hash_page
 
+
+updated_list_rasp = []
 #вставляем в бд расписание и получаем список обновленных
-async def rasp_insert(value):
-	collection = client[db_name]["rasp"]
-	updated_list=[]
-	for x in value:
-		data = await collection.find_one({"name":x.get("name")})
-		if data == None:
-			await collection.insert_one(x)
-			updated_list.append(x.get("name"))
-		else:
-			if x.get("hash") != data.get("hash"):
-				await collection.update_one({"name":x.get("name")},{'$set':{'text':x.get("text"),'hash':x.get("hash")}})
-				updated_list.append(x.get("name"))
-	return updated_list
+async def rasp_insert(x):
+    collection = client[db_name]["rasp"]
+    data = await collection.find_one({"name":x.get("name")})
+    if data == None:
+        await collection.insert_one(x)
+        updated_list_rasp.append(x.get("name"))
+    else:
+        if x.get("hash") != data.get("hash"):
+            await collection.update_one({"name":x.get("name")},{'$set':{'text':x.get("text"),'hash':x.get("hash")}})
+            updated_list_rasp.append(x.get("name"))
