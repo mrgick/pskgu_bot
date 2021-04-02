@@ -6,6 +6,12 @@ import time
 import asyncio
 import os
 
+"""
+TODO:
+- произвести рефакторинг в parser и parsing_page
+- написать тесты
+"""
+
 def main():
     t0 = time.time()
     logger.info("Start parser")
