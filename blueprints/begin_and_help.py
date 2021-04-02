@@ -3,14 +3,15 @@ from vkwave.bots import (
 	simple_bot_message_handler,
 	SimpleBotEvent,
 	TextFilter,
-	CommandsFilter
+	CommandsFilter,
+	PayloadFilter
 )
 from vkwave.bots.utils.keyboards import Keyboard
 
 begin_and_help_router = DefaultRouter()
 
-#BEGIN
-@simple_bot_message_handler(begin_and_help_router, TextFilter("начать"))
+#BEGIN, 
+@simple_bot_message_handler(begin_and_help_router, TextFilter("начать")|TextFilter("start")|PayloadFilter({"command": "start"}))
 async def begin(event: SimpleBotEvent) -> str:
 	kb = Keyboard(one_time=True,inline=False)
 	kb.add_text_button("/help")

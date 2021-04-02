@@ -46,13 +46,14 @@ async def parser():
 
                 #!переписать рассылку + добавить обновления (изменился кабинет и т.д.)
                 #рассылка уведомлений
+                
                 subs = await storage.get(Key("SUBS"))
                 message="Произошло изменение расписания."
                 for x in subs:
                     if x.get("name") in updated_list:
                         for i in x.get("list"):
                             await send_message(message,i)
-
+                
 
             await asyncio.sleep(300)
         except Exception as e:
