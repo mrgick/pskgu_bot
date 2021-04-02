@@ -41,14 +41,14 @@ async def handle(event: SimpleBotEvent) -> str:
             for day, value in text.items():
                 day_name = days_name.get(day)
                 day = 86400 * (int(day)-1) + int(time)
-                day = datetime.datetime.fromtimestamp(day).strftime('%Y.%m.%d')
+                day = datetime.datetime.fromtimestamp(day).strftime('%d.%m.%y')
                 week = week + str(day_name) + ", " + day + "\n"
                 for x, lesson  in value.items():
                     week = week + x + ")" + lesson + "\n"
                 week = week + "\n"
             return week
         else:
-            return "Данная неделя не найдена."
+            return "Данная неделя пуста."
 
 
     #получаем аргументы 
@@ -70,11 +70,15 @@ async def handle(event: SimpleBotEvent) -> str:
             
             #получаем текст недели
             t=week_time(n)
-            message=readable_text(data,t)
+            message=readable_text(data,t)+"\nСсылка: "+str(data.get("url"))
 
-
-
-            message="Имя: "+args[0]+""+"\n\n"+message +"\n"
+            name="Преподователь: "
+            if data.get("prefix") != None:
+                if data.get("prefix")[0] != "преподователь":
+                    name="Группа: "
+                
+            
+            message=name+args[0]+""+"\n\n"+message +"\n"
             #проверка 3 аргумента
             if len(args) > 2:
                 #проверяем есть ли такой префикс языка
