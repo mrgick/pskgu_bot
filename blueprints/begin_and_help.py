@@ -34,3 +34,16 @@ async def help(event: SimpleBotEvent) -> str:
 	m=m+"\n/подписаться 0431-06 - вы подпишитесь на группу 0431-06 и будете получать уведомления"
 	m=m+"\n/отписаться - вы отпишитесь от уведомлений"
 	await event.answer(message=m)
+
+# Вывод расписания пар
+@simple_bot_message_handler(begin_and_help_router, CommandsFilter(commands=("расписание_пар", "time_classes"), prefixes=("/")))
+async def time_classes(event: SimpleBotEvent) -> str:
+    m = "Расписание пар:\n"
+    m = m + "1 - 08:30-10:00\n"
+    m = m + "2 - 10:15-11:45\n"
+    m = m + "3 - 12:30-14:00\n"
+    m = m + "4 - 14:15-15:45\n"
+    m = m + "5 - 16:00-17:30\n"
+    m = m + "6 - 18:00-19:30\n"
+    m = m + "7 - 19:40-21:10\n"
+    await event.answer(message=m)
