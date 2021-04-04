@@ -123,3 +123,5 @@ async def handle(event: SimpleBotEvent) -> str:
     else:
         message = "Вы не ввели аргумент(имя). Пример команды: /find 01"
     await event.answer(message=message)
+
+
