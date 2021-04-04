@@ -21,7 +21,6 @@ week_router = DefaultRouter()
 async def handle(event: SimpleBotEvent) -> str:
 
     # Получаем время недели
-    #! убрать костыль нужно, переработать
     def week_time(n=0):
         time_now = datetime.datetime.now()
         time_now = time_now + datetime.timedelta(days=-time_now.weekday(), weeks=n)
@@ -50,45 +49,55 @@ async def handle(event: SimpleBotEvent) -> str:
         else:
             return "Данная неделя пуста."
 
+    # Перевод текста на другой язык
+    def translate(message, language_prefix):
+        if googletrans.LANGUAGES.get(language_prefix) != None:
+            message = message.replace(".",". ")
+            try:
+                message = googletrans.Translator().translate('Перевод может содержать ошибки.\n' + message, src="ru", dest=language_prefix).text
+            except:
+                message = 'Извините перевод завершился ошибкой. Попробуйте позднее.\n' + message
+        else:
+            message = 'Данный префикс языка не обнаружен в базе данных.\n' + message
+        return message
+
 
     #получаем аргументы 
     args = event.object.object.message.text.split()[1:]
+    
     #Проверяем есть ли аргументы
     if len(args) > 0:
         all_names = await storage.get(Key("ALL"))
         #проверяем первый аргумент (имя)
-        if (args[0] in all_names)==True:
+        if (args[0] in all_names) == True:
             data = await db_find_name(args[0])
             n = 0
             #проверяем второй аргумент (число)
             if len(args) > 1:
                 try:
-                    n=int(args[1])
+                    n = int(args[1])
                 except:
                     pass
 
             
             #получаем текст недели
-            t=week_time(n)
-            message=readable_text(data,t)+"\nСсылка: "+str(data.get("url"))
-
-            name="Преподователь: "
+            t = week_time(n)
+            message  =readable_text(data,t)
+            name = "Преподователь: "
             if data.get("prefix") != None:
                 if data.get("prefix")[0] != "преподователь":
-                    name="Группа: "
-                
+                    name = "Группа: "
+            message = name + args[0] + "\n\n" + message + "\n\nСсылка: "
             
-            message=name+args[0]+""+"\n\n"+message +"\n"
+
             #проверка 3 аргумента
             if len(args) > 2:
                 #проверяем есть ли такой префикс языка
-                if googletrans.LANGUAGES.get(args[2]) != None:
-                    try:
-                        message = googletrans.Translator().translate('Перевод может содержать ошибки.\n'+message,src="ru",dest=args[2]).text
-                    except:
-                        message='Извините перевод завершился ошибкой. Попробуйте позднее.\n'+message
-                else:
-                    message='Данный префикс языка не обнаружен в базе данных.\n'+message
+                message = translate(message, args[2])
+
+            message = message + str(data.get("url"))
+
+
         else:
             message="Данное имя не обнаружено в базе данных. Для поиска имен воспользуйтесь командой /find"
     else:
