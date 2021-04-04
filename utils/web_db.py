@@ -77,6 +77,6 @@ async def rasp_insert(x):
         await collection.insert_one(x)
         updated_list_rasp.append(x.get("name"))
     else:
-        if x.get("hash") != data.get("hash"):
-            await collection.update_one({"name":x.get("name")},{'$set':{'text':x.get("text"),'hash':x.get("hash")}})
+        if x.get("page_hash") != data.get("page_hash") or x.get("url") != data.get("url"):
+            await collection.update_one({"name":x.get("name")},{'$set':{'weeks':x.get("weeks"),'page_hash':x.get("page_hash"),'url':x.get("url"),'prefix':x.get("prefix")}})
             updated_list_rasp.append(x.get("name"))
