@@ -1,3 +1,7 @@
+
+# Ignore the launch script
+launch.sh
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
