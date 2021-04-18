@@ -1,6 +1,9 @@
 
-# Ignore the launch script
-launch.sh
+# Ignore the settings
+settings.cfg
+
+# Ignore log files
+logs/**
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
