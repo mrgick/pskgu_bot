@@ -10,11 +10,6 @@ class UserHeader():
         self.identifier = identifier
         self.dbkey = dbkey
 
-class Status():
-    def __init__(self, msg=None, ex=None):
-        self.msg = msg
-        self.ex = ex
-
 class FetchUser():
     def __init__(self, header, meta):
         self.header = header

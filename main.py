@@ -124,17 +124,10 @@ def main():
     init_logging()
 
     show_version()
+    
+    mods.init()
 
-    mods.init_db()
-
-    if config.OPT_ALL:
-        mods.start_all()
-    else:
-        if config.OPT_VK:
-            mods.start_vk()
-        
-    if config.OPT_SYNC:
-        mods.sync()
+    mods.update()
 
     exit(0)
 

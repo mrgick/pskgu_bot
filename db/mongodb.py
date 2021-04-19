@@ -1,13 +1,15 @@
 
 import motor.motor_asyncio
 import pymongo.errors
+import errors
 import data_types
+import components
 
 
 """
 Обёртка MongoDB
 """
-class MongoDB:
+class MongoDB(components.DBComponent):
 
     def __init__(self, url, name):
 
@@ -22,7 +24,7 @@ class MongoDB:
 
             self.creation_ex = None
         except pymongo.errors.PyMongoError as ex:
-            self.creation_ex = ex
+            raise errors.CreationError(ex)
 
     def __str__(self):
         return "MongoDB '%s'" % self.name
@@ -36,16 +38,14 @@ class MongoDB:
     async def close(self):
         pass
 
-        
-    async def fetch_status(self, key):
-        if self.creation_ex: 
-            return data_types.Status(ex=self.creation_ex)
-        try: 
+    async def status(self):
+        try:
             info = await self.db.command("buildinfo")
-            return data_types.Status(
-                msg="Version %s" % info["version"])
+            raise errors.StatusSuccess("%s version %s" % (self, info["version"]))
         except pymongo.errors.PyMongoError as ex:
-            return data_types.Status(ex=ex)
+            raise errors.StatusError("%s: %s" % (self, ex))
+
+
 
     async def fetch_search_teacher(self, key):
         pass

@@ -1,12 +1,11 @@
 
+import errors
+
 clients = []
 
-async def append(client):
-    status = await client.status()
-    if not status.ex:
-        clients.append(client)
+def append(client):
+    clients.append(client)
 
-    return status
 
 def get_all():
     return clients
