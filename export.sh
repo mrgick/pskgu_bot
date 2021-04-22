@@ -15,7 +15,7 @@ export MONGODB_URL
 export MONGODB_NAME
 
 # Сайт расписания (по умолчанию rasp.pskgu.ru)
-export SCHEDULE_URL="http://rasp.pskgu.ru"
+export SCHEDULE_URL="http://rasp.pskgu.ru/"
 
 # Файл логов 
 export LOGFILE="logs/recent.txt"

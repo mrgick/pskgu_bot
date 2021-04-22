@@ -28,12 +28,13 @@ LOGFILE = env.get("LOGFILE")
 PSKGU_BOT_LOGGER = "pskgu-bot"
 DEBUG_LOGGER = "pskgu-bot-DEBUG"
 
-VERSION_MAJOR = int(env.get("VERSION_MAJOR")) 
-VERSION_MINOR = int(env.get("VERSION_MINOR"))
+VERSION_MAJOR = int(env.get("VERSION_MAJOR") or "0") 
+VERSION_MINOR = int(env.get("VERSION_MINOR") or "0")
 
 VERSION = "%i.%02i" % (VERSION_MAJOR, VERSION_MINOR)
 
-DEBUG = env.get("DEBUG").lower().strip()
+DEBUG = env.get("DEBUG")
+DEBUG = DEBUG.lower().strip() if DEBUG else ""
 DEBUG = (DEBUG == "1" or DEBUG == "true")
 
 # Синхронизировать базу с текущим расписанием
