@@ -1,5 +1,5 @@
 """
-    Работа с mongodb.
+    Работа с mongo db.
 """
 
 from pskgu_bot import Config
