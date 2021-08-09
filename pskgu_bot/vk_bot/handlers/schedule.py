@@ -99,6 +99,7 @@ async def show_schedule(event: SimpleBotEvent):
     user_id = event.object.object.message.from_id
     user = await find_vk_user_by_id(user_id)
     subscribed = is_vk_user_subscribed(user)
+    group_name = None
 
     if user and not subscribed:
         return MSG_NO_USER_GROUP
@@ -112,6 +113,9 @@ async def show_schedule(event: SimpleBotEvent):
         if str_to_int(args[0]) == 0 and args[0] != "0":
             group_name = args[0]
             args = args[1:]
+
+    if not group_name:
+        return MSG_NO_NAME_GROUP
 
     group = await find_group_by_name(group_name)
     if not group:
