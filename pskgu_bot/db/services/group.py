@@ -1,0 +1,132 @@
+"""
+    Файл с функциями взаимодействий с классом Group.
+"""
+
+from pskgu_bot.db.models import Group
+from pskgu_bot.db import local_storage
+from pskgu_bot.utils import get_today, get_week_days
+from vkwave.bots.storage.types import Key
+
+
+async def find_all_groups():
+    """
+        Находит все имена групп и преподавателей.
+    """
+    return [x.name async for x in Group.find()]
+
+
+async def find_groups_name(name):
+    """
+        Находит имена групп по совпадению имени.
+    """
+    groups = []
+    for x in await local_storage.get(Key("groups")):
+        if x.find(name) != -1:
+            groups.append(x)
+    return groups
+
+
+async def find_group_by_name(name):
+    """
+        Находит одну группу или преподавателя.
+    """
+    if name in await local_storage.get(Key("groups")):
+        return await Group.find_one(filter={"name": name})
+    return None
+
+
+async def update_group(name, page_hash, prefix, days, page_url):
+    """
+        Обновление и создание документа группы или преподавателя.
+    """
+    def generate_upd_days(days_old, days_new):
+        """
+            Создаёт словарь с изменёнными днями на этой и следующей неделе.
+        """
+        days = get_week_days(n=0) + get_week_days(n=1)
+        days_upd = {
+            'created': [],
+            'deleted': [],
+            'updated': {}
+        }
+        for day in days:
+            value_old = days_old.get(day)
+            value_new = days_new.get(day)
+            if value_old == value_new:
+                continue
+            elif value_old is None and value_new:
+                days_upd["created"].append(day)
+            elif value_old and value_new is None:
+                days_upd["deleted"].append(day)
+            else:
+                # TODO: добавить изменение значений.
+                days_upd["updated"].update(
+                    {day: {
+                        "old": value_old,
+                        "new": value_new
+                    }})
+        return days_upd
+
+    def generate_information(group):
+        """
+            Генерирует информацию об изменениях группы.
+        """
+        mess = "Произошло обновление - " + group.name + "\n"
+        mess += "Дата: " + group.last_updated + "\n"
+        mess += "Изменились:\n"
+        if "page_url" in group.updated_items:
+            mess += " - url страницы\n"
+            mess += group.page_url + "\n"
+        if "page_hash" in group.updated_items:
+            mess += " - хеш страницы\n"
+        if "days" in group.updated_items:
+            mess += " - некоторые недели\n"
+            upd_days = group.updated_days
+            if upd_days == {'created': [], 'deleted': [], 'updated': {}}:
+                return mess
+            mess += "На текущей и(или) следующей неделе изменились дни:\n"
+            if upd_days["created"] != []:
+                mess += (" - созданы: " +
+                         "".join(x + ", " for x in upd_days["created"]) + "\n")
+            if upd_days["deleted"] != []:
+                mess += (" - удалены: " +
+                         "".join(x + ", " for x in upd_days["deleted"]) + "\n")
+            if upd_days["updated"] != {}:
+                mess += (" - изменены: " +
+                         "".join(x + ", " for x in upd_days["updated"]) + "\n")
+        return mess
+
+    group = await find_group_by_name(name)
+
+    if not group:
+        group = Group(
+            name=name,
+            days=days,
+            page_hash=page_hash,
+            prefix=prefix,
+            page_url=page_url,
+            last_updated=get_today(),
+            updated_items=["days", "page_url", "prefix", "page_hash"])
+    else:
+        group.updated_items = []
+        if group.page_hash != page_hash or group.page_url != page_url:
+            if group.days != days:
+                group.updated_days = generate_upd_days(group.days, days)
+                group.days = days
+                group.updated_items.append("days")
+            if group.page_url != page_url:
+                group.page_url = page_url
+                group.updated_items.append("page_url")
+            if group.prefix != prefix:
+                group.prefix = prefix
+                group.updated_items.append("prefix")
+            if group.page_hash != page_hash:
+                group.page_hash = page_hash
+                group.updated_items.append("page_hash")
+            group.last_updated = get_today()
+            group.updated_information = generate_information(group)
+    if group.updated_items != []:
+        upd_groups = await local_storage.get(Key("updated_groups"))
+        upd_groups.append(group.name)
+        await local_storage.put(Key("updated_groups"), upd_groups)
+    await group.commit()

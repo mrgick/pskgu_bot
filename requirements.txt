@@ -15,6 +15,7 @@ httpx==0.13.3
 hyperframe==5.2.0
 idna==2.10
 lxml==4.6.2
+marshmallow==3.13.0
 motor==2.3.1
 multidict==5.1.0
 pydantic==1.8.1
@@ -23,5 +24,6 @@ pytz==2021.1
 rfc3986==1.4.0
 sniffio==1.2.0
 typing-extensions==3.7.4.3
+umongo==3.0.0
 vkwave==0.2.10
 yarl==1.6.3
