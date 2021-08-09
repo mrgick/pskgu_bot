@@ -1,3 +1,10 @@
+
+# Ignore the settings
+settings.cfg
+
+# Ignore log files
+logs/**
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -9,6 +16,8 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+tests/.secret/
+.vscode/
 .Python
 build/
 develop-eggs/
