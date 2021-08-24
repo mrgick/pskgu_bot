@@ -58,7 +58,8 @@ async def get_anchors_and_run_async(route, page, regex):
                 create_task(
                     generate_by_regex(parent=route, anchor=anchor,
                                       regex=regex)))
-        await wait(tasks)
+        if tasks != []:
+            await wait(tasks)
     except Exception as e:
         logger.error(e)
 
