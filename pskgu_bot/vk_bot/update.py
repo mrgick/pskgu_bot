@@ -16,7 +16,10 @@ async def send_updates_to_users(upd_groups):
         if users == []:
             continue
         group = await find_group_by_name(group_name)
-        information = group.updated_information
+        try:
+            information = group.updated_information
+        except Exception as e:
+            logger.error(e)
         if information != "":
             for vk_id in users:
                 await vk_send_message(user_id=vk_id,
