@@ -4,7 +4,7 @@
 
 from .models import Anchor
 from pskgu_bot import Config
-from pskgu_bot.utils import get_str_date
+from pskgu_bot.utils import date_to_str, logger
 import re
 import lxml.html
 import datetime
@@ -77,7 +77,7 @@ def parse_schedule(html):
         """
         return re.search(r"[а-яА-ЯёЁ]|[a-z-A-Z]|[0-9]", text) is not None
 
-    def get_date(text):
+    def get_date_old(text):
         """
             Возвращает отформатированое время.
         """
@@ -98,6 +98,17 @@ def parse_schedule(html):
         if not (day or month):
             return None
         return get_str_date(day, month)
+
+    def get_date(text):
+        text = text.split(",")[1]
+        text = text.replace(" ", "")
+        try:
+            date = datetime.datetime.strptime(text, '%d.%m.%Y')
+            text = date_to_str(date)
+            return text
+        except Exception as e:
+            logger.error(e)
+            return None
 
     html = lxml_parce(html)
     data = {}
