@@ -128,4 +128,4 @@ async def generate_group(route, page, title):
         await update_group(name, page_hash, prefix, days, url)
         logger.info(name + " " + prefix[0])
     except Exception as e:
-        logger.error(e)
+        logger.error(title + " " + route.url + " " + e)

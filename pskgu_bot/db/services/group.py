@@ -96,7 +96,7 @@ async def update_group(name, page_hash, prefix, days, page_url):
                          "".join(x + ", " for x in upd_days["updated"]) + "\n")
         return mess
 
-    group = await find_group_by_name(name)
+    group = await Group.find_one(filter={"name": name})
 
     if not group:
         group = Group(

@@ -29,7 +29,7 @@ async def run_parser():
                 logger.info("Parsing DONE")
                 await set_main_page_hash(hash_now)
                 upd_groups = await update_info_main_page()
-                await send_updates_to_users(upd_groups)
                 await initialize_storage()
+                await send_updates_to_users(upd_groups)
         finally:
             await sleep(sleeping_time)

@@ -40,8 +40,8 @@ class Route:
         self.prefix = prefix
 
         if parent:
-            url = os.path.join(parent.url_dir, url)
-            self._url = url
+            # url = os.path.join(parent.url_dir, url)
+            # self._url = url
 
             if os.path.splitext(url)[1]:
                 self.url_dir = os.path.dirname(url)
@@ -64,4 +64,4 @@ class Route:
         """
             Проверяет url на действительность.
         """
-        return url.rfind("#") == -1
+        return (url.rfind("#") == -1 and url.rfind("\\0.html") == -1)
