@@ -64,4 +64,4 @@ class Route:
         """
             Проверяет url на действительность.
         """
-        return (url.rfind("#") == -1 and url.rfind("0.html") == -1)
+        return (url.rfind("#") == -1 and url.rfind("\\0.html") == -1)
