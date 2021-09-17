@@ -69,6 +69,7 @@ def parse_schedule(html):
         text = text.replace("\r\n", "")
         text = text.replace("\n", " ")
         text = text.replace("_", " ")
+        text = text.replace("  ", " ")
         return text
 
     def good_text(text):
@@ -120,6 +121,11 @@ def parse_schedule(html):
             day = {}
             day_date = ""
             for i, td in enumerate(tr.xpath('td')):
+
+                # fix spaces
+                for br in td.xpath("*//br"):
+                    br.tail = " " + br.tail if br.tail else " "
+
                 text = normolize_text(td.text_content())
                 if i == 0:
                     day_date = get_date(text)
