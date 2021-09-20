@@ -24,7 +24,7 @@ async def send_updates_to_users(upd_groups):
                 for vk_id in users:
                     await vk_send_message(user_id=vk_id,
                                           message=information)
-                    logger.info("Sended message vk_id="+vk_id)
+                    # logger.info("Sended message vk_id="+vk_id)
         except Exception as e:
             logger.error(e)
     logger.info(upd_groups)
