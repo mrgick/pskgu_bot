@@ -7,7 +7,7 @@ from pskgu_bot.db.services import (initialize_storage, get_main_page_hash,
                                    set_main_page_hash, update_info_main_page)
 from pskgu_bot import Config
 from pskgu_bot.utils import logger
-from pskgu_bot.vk_bot.update import send_updates_to_users
+from pskgu_bot.bots.vk_bot.update import send_updates_to_users
 from asyncio import sleep
 
 
