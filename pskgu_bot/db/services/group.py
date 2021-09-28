@@ -17,7 +17,8 @@ async def find_all_groups():
 
 async def find_groups_name(name):
     """
-        Находит имена групп по совпадению имени.
+        Находит имена групп в локальном
+        хранилище по совпадению имени.
     """
     groups = []
     for x in await local_storage.get(Key("groups")):
