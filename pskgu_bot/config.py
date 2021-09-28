@@ -13,7 +13,6 @@ class Config:
     STOP_PARSER = os.environ.get('STOP_PARSER')
     REMOTE_URL = "http://rasp.pskgu.ru"
     SEMAPHORE = 40
-    YEAR = 2021
 
     # настроки mongo db
     DB_NAME = "DB"
