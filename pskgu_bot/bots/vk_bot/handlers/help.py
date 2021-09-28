@@ -3,17 +3,25 @@
 """
 
 from ..bot import simple_answer
-from ..tools.messages import MSG_HELP, MSG_TIMETABLE, msg_start
-from ..tools.filters import HELP_FILTER
+from pskgu_bot.bots.base.help import begin, help, time_classes
 from vkwave.bots import (DefaultRouter, simple_bot_message_handler,
-                         SimpleBotEvent)
+                         SimpleBotEvent, TextFilter, PayloadFilter,
+                         CommandsFilter, TextStartswithFilter)
+
+BEGIN = (TextFilter("начать") | TextFilter("start")
+         | PayloadFilter({"command": "start"}))
+HELP = (CommandsFilter(commands=("help", "справка"), prefixes=("/"))
+        | TextStartswithFilter(("help", "справка")))
+TIME_CLASSES = (CommandsFilter(commands=("расписание_пар", "time_classes"),
+                               prefixes=("/"))
+                | TextStartswithFilter(("расписание_пар", "time_classes")))
 
 help_router = DefaultRouter()
 
 
-@simple_bot_message_handler(help_router, HELP_FILTER.BEGIN)
+@simple_bot_message_handler(help_router, BEGIN)
 @simple_answer
-async def begin(event: SimpleBotEvent):
+async def begin_handler(event: SimpleBotEvent):
     """
         Выводит начальное сообщение пользователю.
     """
@@ -22,22 +30,22 @@ async def begin(event: SimpleBotEvent):
             event.api_ctx.api_request("users.get",
                                       {"user_ids": user_id}))["response"][0]
     name = name['last_name'] + " " + name['first_name']
-    return msg_start(name)
+    return begin(name)
 
 
-@simple_bot_message_handler(help_router, HELP_FILTER.HELP)
+@simple_bot_message_handler(help_router, HELP)
 @simple_answer
-async def help(event: SimpleBotEvent):
+async def help_handler(event: SimpleBotEvent):
     """
         Выводит справку пользователю.
     """
-    return MSG_HELP
+    return help()
 
 
-@simple_bot_message_handler(help_router, HELP_FILTER.TIME_CLASSES)
+@simple_bot_message_handler(help_router, TIME_CLASSES)
 @simple_answer
-async def time_classes(event: SimpleBotEvent):
+async def time_classes_handler(event: SimpleBotEvent):
     """
         Выводит справку о времени начала пар.
     """
-    return MSG_TIMETABLE
+    return time_classes()

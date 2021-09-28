@@ -1,142 +1,60 @@
 """
-    Файл с функциями, отвечающими за поиск и вывод расписания.
+    Файл с хендлерами поиска и вывода расписания.
 """
 
+from vkwave.bots import (DefaultRouter, simple_bot_message_handler,
+                         SimpleBotEvent, CommandsFilter, TextStartswithFilter)
 from ..bot import simple_answer
-from ..tools.filters import SCHEDULE_FILTER
-from ..tools.messages import (MSG_NO_USER_GROUP, MSG_NO_NAME_GROUP,
-                              MSG_GROUPS_IN_BD_FOUND,
-                              MSG_GROUPS_IN_BD_NOT_FOUND,
-                              msg_not_found_group_name)
-
-from pskgu_bot.db.services import (find_vk_user_by_id, find_group_by_name,
-                                   find_groups_name, is_vk_user_subscribed)
-from pskgu_bot.utils import get_week_days, get_name_of_day, translate_message
-from vkwave.bots import (
-    DefaultRouter,
-    simple_bot_message_handler,
-    SimpleBotEvent,
-)
+from pskgu_bot.utils import str_to_int
+from pskgu_bot.db.services import check_group
+from pskgu_bot.bots.base.shedule import find_group, show_schedule
 
 schedule_router = DefaultRouter()
 
+SHOW = (CommandsFilter(commands=("show", "показать"), prefixes=("/"))
+        | TextStartswithFilter(("show", "показать")))
 
-@simple_bot_message_handler(schedule_router, SCHEDULE_FILTER.SHOW)
+FIND = (CommandsFilter(commands=("find", "поиск"), prefixes=("/"))
+        | TextStartswithFilter(("find", "поиск")))
+
+
+@simple_bot_message_handler(schedule_router, SHOW)
 @simple_answer
-async def show_schedule(event: SimpleBotEvent):
+async def show_schedule_handler(event: SimpleBotEvent):
     """
-        Выводит расписание.
+        Вывод расписания.
     """
-    def make_readable_text(group, keys):
-        """
-            Преобразуем group.days в читаемое сообщение.
-        """
-        mess = ""
-        for key in keys:
-            day = group.days.get(key)
-            if day:
-                day_name = get_name_of_day(key)
-                mess += day_name + ", " + key + "\n"
-                for x, lesson in day.items():
-                    mess += x + ") " + lesson + "\n"
-                mess += "\n"
-        if mess == "":
-            mess = "Данная неделя пуста.\n"
-        return mess
 
-    def str_to_int(x):
-        """
-            Перевод строки в число.
-        """
-        try:
-            x = int(x)
-            return x
-        except Exception:
-            return 0
-
-    def get_week_message(args, group):
-        """
-            Вспомогательная функция.
-            Возвращает сообщение об расписании.
-        """
-        def add_name(mess, group):
-            """
-                Вставка имени преподавателя или названия группы.
-            """
-            if group.prefix[0] == "преподователь":
-                mess += "Преподователь: "
-            else:
-                mess += "Группа: "
-            mess += group.name + "\n"
-            return mess
-
-        def add_url(mess, url, index):
-            """
-                Вставка ссылки в сообщение.
-            """
-            return mess[:(index + 1)] + url + mess[index:]
-
-        mess = ""
-        n = 0
-        if len(args) > 0:
-            n = str_to_int(args[0])
-
-        keys = get_week_days(n)
-        mess = add_name(mess, group)
-        place_for_url = mess.index(mess[-1])
-        mess += make_readable_text(group, keys)
-
-        if len(args) > 1:
-            mess += "\nСсылка:"
-            mess = translate_message(mess, args[1])
-            mess += " " + group.page_url + "\n"
-        else:
-            url = "Ссылка: " + group.page_url + "\n"
-            mess = add_url(mess, url, place_for_url)
-        return mess
-
-    args = event.object.object.message.text.split()[1:]
     user_id = event.object.object.message.from_id
-    user = await find_vk_user_by_id(user_id)
-    group_name = ""
+    args = event.object.object.message.text.split()[1:]
 
-    if user:
-        group_name = user.group
-
+    group_name = None
+    week_shift = None
     if len(args) > 0:
-        if str_to_int(args[0]) == 0 and args[0] != "0":
+        if (await check_group(args[0]) is False
+                and str_to_int(args[0]) is not None):
+            week_shift = args[0]
+        else:
             group_name = args[0]
-            args = args[1:]
 
-    if group_name == "":
-        return MSG_NO_NAME_GROUP
+    if len(args) > 1:
+        if str_to_int(args[1]) is not None:
+            week_shift = args[1]
 
-    group = await find_group_by_name(group_name)
-    if not group:
-        return msg_not_found_group_name(group_name)
-    return get_week_message(args, group)
+    mess = await show_schedule(user_id, group_name, week_shift, "vk")
+    return mess
 
 
-@simple_bot_message_handler(schedule_router, SCHEDULE_FILTER.FIND)
+@simple_bot_message_handler(schedule_router, FIND)
 @simple_answer
-async def find_group(event: SimpleBotEvent):
+async def find_group_handler(event: SimpleBotEvent):
     """
         Поиск имени группы.
     """
     args = event.object.object.message.text.split()[1:]
     if len(args) == 0:
-        return MSG_NO_NAME_GROUP
-
-    groups = await find_groups_name(args[0])
-    if groups == []:
-        return MSG_GROUPS_IN_BD_NOT_FOUND
-
-    mess = ""
-    for x in groups:
-        mess += x
-        # чтобы не получить ошибку, введен лимит
-        if (len(mess)) >= 500:
-            mess = mess[0:mess.rfind('\n')]
-            break
-        mess += "\n"
-    return MSG_GROUPS_IN_BD_FOUND + mess
+        group_name = None
+    else:
+        group_name = str(args[0])
+    mess = await find_group(group_name)
+    return mess

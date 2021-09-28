@@ -3,14 +3,14 @@
 """
 
 from ..bot import vk_send_message
-from ..tools.filters import MAP_FILTER
+from pskgu_bot.bots.base.map import PHOTOS
 from vkwave.bots import (DefaultRouter, simple_bot_message_handler,
-                         SimpleBotEvent)
+                         SimpleBotEvent, CommandsFilter, TextStartswithFilter)
 
 map_router = DefaultRouter()
 
-photos = ("photo-176090321_457239022,photo-176090321_457239021," +
-          "photo-176090321_457239020,photo-176090321_457239019")
+MAP_FILTER = (CommandsFilter(commands=("map", "карта"), prefixes=("/"))
+              | TextStartswithFilter(("map", "карта")))
 
 
 @simple_bot_message_handler(map_router, MAP_FILTER)
@@ -19,4 +19,4 @@ async def show_map(event: SimpleBotEvent):
         Выводит карту зданий ПГУ на Льва Толстого 4.
     """
     peer_id = event.object.object.message.peer_id
-    await vk_send_message(peer_id=peer_id, attachment=photos)
+    await vk_send_message(peer_id=peer_id, attachment=PHOTOS)
