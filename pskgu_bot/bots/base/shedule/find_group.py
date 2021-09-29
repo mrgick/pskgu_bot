@@ -21,5 +21,7 @@ async def find_group(group_name: Optional[str] = None) -> str:
         mess += x
         mess += "\n"
         if (len(mess)) >= 500:
+            mess += "Всего записей: " + str(len(groups)) + "\n"
             break
+
     return MSG_GROUPS_IN_BD_FOUND + mess
