@@ -34,13 +34,6 @@ def get_today(n=0, full=False):
     return date_to_str(time_now, full)
 
 
-def get_str_date(day, month, year=Config.YEAR):
-    """
-        Возвращает дату в виде строки.
-    """
-    return date_to_str(datetime(year, month, day))
-
-
 def get_week_days(n=0):
     """
         Возвращает список дней этой недели

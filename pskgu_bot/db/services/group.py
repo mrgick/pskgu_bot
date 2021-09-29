@@ -2,10 +2,9 @@
     Файл с функциями взаимодействий с классом Group.
 """
 
-from pskgu_bot.db.models import Group
+from pskgu_bot.db.models import Group, Key
 from pskgu_bot.db import local_storage
 from pskgu_bot.utils import get_today, get_week_days
-from vkwave.bots.storage.types import Key
 
 
 async def find_all_groups():
@@ -15,9 +14,18 @@ async def find_all_groups():
     return [x.name async for x in Group.find()]
 
 
+async def check_group(name):
+    """
+        Проверяет находится ли группа в локальном
+        хранилище по совпадению имени.
+    """
+    return (name in await local_storage.get(Key("groups")))
+
+
 async def find_groups_name(name):
     """
-        Находит имена групп по совпадению имени.
+        Находит имена групп в локальном
+        хранилище по совпадению имени.
     """
     groups = []
     for x in await local_storage.get(Key("groups")):

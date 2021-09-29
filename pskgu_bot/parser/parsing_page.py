@@ -78,29 +78,10 @@ def parse_schedule(html):
         """
         return re.search(r"[а-яА-ЯёЁ]|[a-z-A-Z]|[0-9]", text) is not None
 
-    def get_date_old(text):
+    def get_date(text):
         """
             Возвращает отформатированое время.
         """
-        def day_validate(day):
-            """
-                Проверка дня.
-            """
-            if 0 < day < 32:
-                return day
-            else:
-                return None
-
-        m = re.match(r".*\s*\,(\d+)\s*(.{3})", text)
-        if not m:
-            return None
-        day = day_validate(int(m.group(1), 10))
-        month = MONTH_NAMES.get(m.group(2).lower())
-        if not (day or month):
-            return None
-        return get_str_date(day, month)
-
-    def get_date(text):
         text = text.split(",")[1]
         text = text.replace(" ", "")
         try:
