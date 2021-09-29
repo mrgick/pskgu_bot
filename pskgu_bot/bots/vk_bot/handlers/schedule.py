@@ -3,11 +3,14 @@
 """
 
 from vkwave.bots import (DefaultRouter, simple_bot_message_handler,
-                         SimpleBotEvent, CommandsFilter, TextStartswithFilter)
+                         SimpleBotEvent, CommandsFilter, TextStartswithFilter,
+                         PhotoUploader)
 from ..bot import simple_answer
 from pskgu_bot.utils import str_to_int
 from pskgu_bot.db.services import check_group
 from pskgu_bot.bots.base.shedule import find_group, show_schedule
+from io import BytesIO
+import json
 
 schedule_router = DefaultRouter()
 
@@ -30,6 +33,13 @@ async def show_schedule_handler(event: SimpleBotEvent):
 
     group_name = None
     week_shift = None
+    image = False
+
+    if len(args) > 0:
+        if args[-1] == "img":
+            image = True
+            args = args[:-1]
+
     if len(args) > 0:
         if (await check_group(args[0]) is False
                 and str_to_int(args[0]) is not None):
@@ -41,7 +51,7 @@ async def show_schedule_handler(event: SimpleBotEvent):
         if str_to_int(args[1]) is not None:
             week_shift = args[1]
 
-    mess = await show_schedule(user_id, group_name, week_shift, "vk")
+    mess, _ = await show_schedule(user_id, group_name, week_shift, False, "vk")
     return mess
 
 
