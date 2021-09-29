@@ -1,6 +1,6 @@
 from ..messages import (MSG_NO_NAME_GROUP, MSG_NOW_UNSUBCRIBE,
-                        msg_not_found_group_name, msg_already_subscribed,
-                        msg_now_subscribed)
+                        MSG_NO_USER_GROUP, msg_not_found_group_name,
+                        msg_already_subscribed, msg_now_subscribed)
 from pskgu_bot.db.services import (find_group_by_name, find_vk_user_by_id,
                                    update_user)
 from typing import Optional
@@ -40,5 +40,9 @@ async def unsubcribe(user_id: Optional[str] = None,
         user = await find_vk_user_by_id(user_id)
         if not user:
             return MSG_NO_USER_GROUP
-        await update_user(user_id, "")
+        else:
+            if user.group == "":
+                return MSG_NO_USER_GROUP
+            else:
+                await update_user(user_id, "")
     return MSG_NOW_UNSUBCRIBE
