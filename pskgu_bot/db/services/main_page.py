@@ -2,10 +2,9 @@
     Файл с функциями взаимодействий с классом Main_Page.
 """
 
-from pskgu_bot.db.models import Main_Page
+from pskgu_bot.db.models import Main_Page, Key
 from pskgu_bot.db import local_storage
 from pskgu_bot.utils import get_today
-from vkwave.bots.storage.types import Key
 
 
 async def get_main_page_hash():

@@ -2,10 +2,9 @@
     Файл с функциями взаимодействий с классом Group.
 """
 
-from pskgu_bot.db.models import Group
+from pskgu_bot.db.models import Group, Key
 from pskgu_bot.db import local_storage
 from pskgu_bot.utils import get_today, get_week_days
-from vkwave.bots.storage.types import Key
 
 
 async def find_all_groups():

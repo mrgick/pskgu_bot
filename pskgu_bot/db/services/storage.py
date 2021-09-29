@@ -5,7 +5,7 @@
 from pskgu_bot.db.models import Group, Main_Page, Vk_User
 from pskgu_bot.db import local_storage
 from .group import find_all_groups
-from vkwave.bots.storage.types import Key
+from ..models import Key
 
 
 async def initialize_storage():

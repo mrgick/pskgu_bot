@@ -4,6 +4,9 @@
 
 from .db import instance
 from umongo import Document, fields
+import typing
+
+Key = typing.NewType("Key", str)
 
 
 @instance.register
