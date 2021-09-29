@@ -2,11 +2,12 @@
     Файл с хендлерами поиска и вывода расписания.
 """
 
-from ..bot import Startwith
+from ..bot import Startwith, vk_bot
 from pskgu_bot.utils import str_to_int
 from pskgu_bot.db.services import check_group
 from pskgu_bot.bots.base.shedule import find_group, show_schedule
 from vkbottle.bot import BotLabeler, Message
+from vkbottle.tools import PhotoMessageUploader
 from io import BytesIO
 import json
 
@@ -45,8 +46,13 @@ async def show_schedule_handler(message: Message):
         if str_to_int(args[1]) is not None:
             week_shift = args[1]
 
-    mess, _ = await show_schedule(user_id, group_name, week_shift, False, "vk")
-    return mess
+    mess, img = await show_schedule(user_id, group_name, week_shift, image,
+                                    "vk")
+    if img:
+        photo = await PhotoMessageUploader(vk_bot.api).upload(img)
+        await message.answer(attachment=photo)
+    else:
+        return mess
 
 
 @bl.message(FIND)
