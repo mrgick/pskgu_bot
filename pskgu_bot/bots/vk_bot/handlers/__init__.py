@@ -1,4 +1,5 @@
-from .schedule import schedule_router
-from .user_settings import user_settings_router
-from .help import help_router
-from .map import map_router
+from . import schedule
+from . import user_settings
+from . import help
+from . import map
+labelers = [schedule.bl, help.bl, user_settings.bl, map.bl]

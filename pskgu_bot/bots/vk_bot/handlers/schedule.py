@@ -2,34 +2,28 @@
     Файл с хендлерами поиска и вывода расписания.
 """
 
-from vkwave.bots import (DefaultRouter, simple_bot_message_handler,
-                         SimpleBotEvent, CommandsFilter, TextStartswithFilter,
-                         PhotoUploader)
-from ..bot import simple_answer
+from ..bot import Startwith
 from pskgu_bot.utils import str_to_int
 from pskgu_bot.db.services import check_group
 from pskgu_bot.bots.base.shedule import find_group, show_schedule
+from vkbottle.bot import BotLabeler, Message
 from io import BytesIO
 import json
 
-schedule_router = DefaultRouter()
+bl = BotLabeler()
 
-SHOW = (CommandsFilter(commands=("show", "показать"), prefixes=("/"))
-        | TextStartswithFilter(("show", "показать")))
-
-FIND = (CommandsFilter(commands=("find", "поиск"), prefixes=("/"))
-        | TextStartswithFilter(("find", "поиск")))
+SHOW = (Startwith(("show", "показать")))
+FIND = (Startwith(("find", "поиск")))
 
 
-@simple_bot_message_handler(schedule_router, SHOW)
-@simple_answer
-async def show_schedule_handler(event: SimpleBotEvent):
+@bl.message(SHOW)
+async def show_schedule_handler(message: Message):
     """
         Вывод расписания.
     """
 
-    user_id = event.object.object.message.from_id
-    args = event.object.object.message.text.split()[1:]
+    user_id = message.from_id
+    args = message.text.split(" ")[1:]
 
     group_name = None
     week_shift = None
@@ -55,13 +49,12 @@ async def show_schedule_handler(event: SimpleBotEvent):
     return mess
 
 
-@simple_bot_message_handler(schedule_router, FIND)
-@simple_answer
-async def find_group_handler(event: SimpleBotEvent):
+@bl.message(FIND)
+async def find_group_handler(message: Message) -> str:
     """
         Поиск имени группы.
     """
-    args = event.object.object.message.text.split()[1:]
+    args = message.text.split()[1:]
     if len(args) == 0:
         group_name = None
     else:
