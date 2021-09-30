@@ -12,9 +12,17 @@ class Startwith(rules.ABCMessageRule):
         self.words = words
 
     async def check(self, message: Message) -> bool:
+        message.text = message.text.replace("[club176090321|@mrgick]", "")
+        message.text = message.text.replace("  ", " ")
+
+        if message.text.startswith(" "):
+            message.text = message.text[1:]
+
         mess = message.text.split(" ")[0].lower()
+
         if mess.startswith("/"):
             mess = mess[1:]
+
         for word in self.words:
             if word == mess:
                 return True
