@@ -12,9 +12,12 @@ class Startwith(rules.ABCMessageRule):
         self.words = words
 
     async def check(self, message: Message) -> bool:
+
         mess = message.text.split(" ")[0].lower()
+
         if mess.startswith("/"):
             mess = mess[1:]
+
         for word in self.words:
             if word == mess:
                 return True

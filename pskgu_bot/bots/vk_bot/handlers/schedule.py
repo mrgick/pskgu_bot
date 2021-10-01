@@ -30,10 +30,9 @@ async def show_schedule_handler(message: Message):
     week_shift = None
     image = False
 
-    if len(args) > 0:
-        if args[-1] == "img":
-            image = True
-            args = args[:-1]
+    if "img" in args:
+        image = True
+        args.remove("img")
 
     if len(args) > 0:
         if (await check_group(args[0]) is False
