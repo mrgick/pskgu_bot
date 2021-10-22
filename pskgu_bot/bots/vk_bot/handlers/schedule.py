@@ -7,6 +7,7 @@ from pskgu_bot.utils import str_to_int
 from pskgu_bot.db.services import check_group
 from pskgu_bot.bots.base.shedule import (find_group, show_schedule,
                                          get_group_url)
+from pskgu_bot.bots.base.services import get_first_arg
 from vkbottle.bot import BotLabeler, Message
 from vkbottle.tools import PhotoMessageUploader
 from io import BytesIO
@@ -62,10 +63,7 @@ async def find_group_handler(message: Message) -> str:
         Поиск имени группы.
     """
     args = message.text.split()[1:]
-    if len(args) == 0:
-        group_name = None
-    else:
-        group_name = str(args[0])
+    group_name = get_first_arg(args)
     mess = await find_group(group_name)
     return mess
 
@@ -78,11 +76,6 @@ async def get_group_url_handler(message: Message):
 
     user_id = message.from_id
     args = message.text.split(" ")[1:]
-
-    if len(args) == 0:
-        group_name = None
-    else:
-        group_name = str(args[0])
-
+    group_name = get_first_arg(args)
     mess = await get_group_url(user_id, group_name, "vk")
     return mess
