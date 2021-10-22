@@ -5,7 +5,8 @@
 from ..bot import Startwith, vk_bot
 from pskgu_bot.utils import str_to_int
 from pskgu_bot.db.services import check_group
-from pskgu_bot.bots.base.shedule import find_group, show_schedule
+from pskgu_bot.bots.base.shedule import (find_group, show_schedule,
+                                         get_group_url)
 from vkbottle.bot import BotLabeler, Message
 from vkbottle.tools import PhotoMessageUploader
 from io import BytesIO
@@ -15,6 +16,7 @@ bl = BotLabeler()
 
 SHOW = (Startwith(("show", "показать")))
 FIND = (Startwith(("find", "поиск")))
+URL = (Startwith(("url", "ссылка")))
 
 
 @bl.message(SHOW)
@@ -65,4 +67,22 @@ async def find_group_handler(message: Message) -> str:
     else:
         group_name = str(args[0])
     mess = await find_group(group_name)
+    return mess
+
+
+@bl.message(URL)
+async def get_group_url_handler(message: Message):
+    """
+        Вывод ссылки на расписание.
+    """
+
+    user_id = message.from_id
+    args = message.text.split(" ")[1:]
+
+    if len(args) == 0:
+        group_name = None
+    else:
+        group_name = str(args[0])
+
+    mess = await get_group_url(user_id, group_name, "vk")
     return mess
