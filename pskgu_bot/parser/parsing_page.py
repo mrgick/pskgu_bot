@@ -62,14 +62,18 @@ def parse_schedule(html):
     """
         Парсит расписание c html страницы
     """
-    def normolize_text(text):
+    def normolize_text(text, version):
         """
             Чистит текст от лишних символов.
         """
-        text = text.replace("\r\n", "")
-        text = text.replace("\n", " ")
-        text = text.replace("_", " ")
-        text = text.replace("  ", " ")
+        if version == "prev":
+            text = text.replace("\r\n", "")
+            text = text.replace("\n", " ")
+            text = text.replace("_", " ")
+        elif version == "post":
+            while '  ' in text:
+                text = text.replace('  ', ' ')
+            text = text.strip()
         return text
 
     def good_text(text):
@@ -95,7 +99,7 @@ def parse_schedule(html):
     html = lxml_parce(html)
     data = {}
 
-    for table in html.xpath("/html/body/table"):
+    for table in html.xpath(".//table"):
         for item, tr in enumerate(table.xpath("tr")):
             if item < 2:
                 continue
@@ -103,15 +107,16 @@ def parse_schedule(html):
             day_date = ""
             for i, td in enumerate(tr.xpath('td')):
 
-                # fix spaces
-                for br in td.xpath("*//br"):
-                    br.tail = " " + br.tail if br.tail else " "
+                for elem in td.xpath(".//*"):  # fixing spaces
+                    elem.tail = " " + elem.tail if elem.tail else " "
 
-                text = normolize_text(td.text_content())
+                text = normolize_text(td.text_content(), "prev")
+
                 if i == 0:
                     day_date = get_date(text)
                     continue
                 if good_text(text):
+                    text = normolize_text(text, "post")
                     day.update({str(i): text})
             if day != {} and day_date:
                 data.update({day_date: day})
