@@ -5,6 +5,7 @@
 from ..bot import Startwith
 from vkbottle.bot import BotLabeler, Message
 from pskgu_bot.bots.base.user_settings import subcribe, unsubcribe, delete
+from pskgu_bot.bots.base.services import get_first_arg
 
 bl = BotLabeler()
 
@@ -20,9 +21,7 @@ async def subcribe_handler(message: Message) -> str:
     """
     args = message.text.split()[1:]
     user_id = message.from_id
-    group_name = None
-    if len(args) > 0:
-        group_name = args[0]
+    group_name = get_first_arg(args)
     return await subcribe(user_id, group_name, "vk")
 
 
