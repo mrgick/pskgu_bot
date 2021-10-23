@@ -34,9 +34,8 @@ async def buttons(message: Message):
     """
     args = message.text.split(" ")[1:]
     elem = get_first_arg(args)
-    if elem == "help" or elem is None:
-        mess = HELP_MESSAGE
-        return mess
+    if elem == "help":
+        return HELP_MESSAGE
     elif elem == "show":
         mess = SHOW_MESSAGE
         keyb = get_show_keyboard()
@@ -46,5 +45,7 @@ async def buttons(message: Message):
     elif elem == "delete":
         mess = DELETE_MESSAGE
         keyb = EMPTY_KEYBOARD
+    else:
+        return HELP_MESSAGE
 
     await message.answer(message=mess, keyboard=keyb)
