@@ -1,4 +1,5 @@
 from pskgu_bot.bots.base.messages import (MSG_NO_NAME_GROUP,
+                                          MSG_NO_NAME_AND_USER_GROUP,
                                           msg_not_found_group_name)
 
 from pskgu_bot.db.services import (find_vk_user_by_id, find_group_by_name)
@@ -57,7 +58,7 @@ async def show_schedule(user_id: Optional[str] = None,
             group_name = user.group
 
     if (group_name is None or group_name == ""):
-        return MSG_NO_NAME_GROUP, None
+        return MSG_NO_NAME_AND_USER_GROUP, None
 
     group = await find_group_by_name(group_name)
     if not group:
