@@ -6,7 +6,7 @@ def get_show_shifted_keyboard(week: int = 0):
     keyboard.add(Text("Текущая неделя",
                       payload={
                           "command": "show",
-                          "week": week
+                          "week": 0
                       }),
                  color=KeyboardButtonColor.PRIMARY)
     keyboard.row()
