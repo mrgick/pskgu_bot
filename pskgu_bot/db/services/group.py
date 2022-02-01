@@ -52,11 +52,7 @@ async def update_group(name, page_hash, prefix, days, page_url):
             Создаёт словарь с изменёнными днями на этой и следующей неделе.
         """
         days = get_week_days(n=0) + get_week_days(n=1)
-        days_upd = {
-            'created': [],
-            'deleted': [],
-            'updated': {}
-        }
+        days_upd = {'created': [], 'deleted': [], 'updated': {}}
         for day in days:
             value_old = days_old.get(day)
             value_new = days_new.get(day)
@@ -117,6 +113,10 @@ async def update_group(name, page_hash, prefix, days, page_url):
             updated_items=["days", "page_url", "prefix", "page_hash"])
     else:
         group.updated_items = []
+        # при добавлении проверки на prefix в следующий if просиходит баг:
+        # не видит изменения в других атрибутах, кроме prefix и
+        # добавляет в l_s.updated_groups два раза имя группы
+        # не понятна причина бага, следует проверить в будущем
         if group.page_hash != page_hash or group.page_url != page_url:
             if group.days != days:
                 group.updated_days = generate_upd_days(group.days, days)
