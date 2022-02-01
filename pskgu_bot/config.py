@@ -16,7 +16,7 @@ class Config:
 
     # настроки mongo db
     DB_NAME = "DB"
-    MAX_POOL_SIZE = 100
+    MAX_POOL_SIZE = 50
     MONGO_URI = os.environ.get('MONGO_URL')
 
     # настроки вк бота
