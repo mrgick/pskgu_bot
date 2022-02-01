@@ -23,7 +23,7 @@ class Route:
         Узел маршрута.
     """
 
-    __slots__ = ('valid', '_url', 'prefix', 'url_dir')
+    __slots__ = ('valid', '_url', 'prefix')
 
     def __init__(self, url, parent=None, prefix=None):
         """
@@ -35,20 +35,13 @@ class Route:
 
         url = self.normolize_url(url)
         self._url = url
-        self.url_dir = url
 
-        self.prefix = prefix
-
+        self.prefix = []
         if parent:
-            # url = os.path.join(parent.url_dir, url)
-            # self._url = url
-
-            if os.path.splitext(url)[1]:
-                self.url_dir = os.path.dirname(url)
-            else:
-                self.url_dir = url
-            if not prefix and parent.prefix:
-                self.prefix = parent.prefix
+            if parent.prefix:
+                self.prefix.extend(parent.prefix)
+        if prefix:
+            self.prefix.append(prefix)
 
     @property
     def url(self):

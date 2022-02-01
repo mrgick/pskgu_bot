@@ -88,7 +88,7 @@ async def generate_by_regex(parent, anchor, regex=0):
         ]
 
     else:
-        list_regex = [[None, parent.prefix, 1]]
+        list_regex = [[None, anchor.title, 1]]
 
     for item in list_regex:
         if valid(item[0], anchor.title, regex):
@@ -121,7 +121,7 @@ async def generate_group(route, page, title):
 
     try:
         page_hash = get_hash(page)
-        prefix = [route.prefix, route.url_dir]
+        prefix = route.prefix
         days = parse_schedule(page)
         name = normolize_name(title)
         url = route.url
