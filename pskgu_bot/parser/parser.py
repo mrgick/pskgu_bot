@@ -53,7 +53,7 @@ async def get_anchors_and_run_async(route, page, regex):
     """
     try:
         tasks = []
-        for anchor in parse_urls(page):
+        for anchor in parse_urls(page, route, regex):
             tasks.append(
                 create_task(
                     generate_by_regex(parent=route, anchor=anchor,
@@ -92,7 +92,7 @@ async def generate_by_regex(parent, anchor, regex=0):
 
     for item in list_regex:
         if valid(item[0], anchor.title, regex):
-            route = Route(anchor.href, parent, item[1])
+            route = Route(anchor.href, parent, item[1], anchor.course)
             if route.valid:
                 page = await get_page(route.url)
                 if page:
@@ -110,12 +110,14 @@ async def generate_group(route, page, title):
     """
         Генерирует расписание в готовом виде.
     """
-    def normolize_name(name):
+    def normolize_name(name, prefix):
         """
             Преобразует имя в нормальный вид.
         """
         if name.find(" ") == -1:
             return name
+        elif prefix != "преподователь":
+            return name.replace(" ", "_")
         else:
             return name.split(",")[0].replace(" ", "_")
 
@@ -123,7 +125,7 @@ async def generate_group(route, page, title):
         page_hash = get_hash(page)
         prefix = route.prefix
         days = parse_schedule(page)
-        name = normolize_name(title)
+        name = normolize_name(title, prefix[0])
         url = route.url
         await update_group(name, page_hash, prefix, days, url)
         logger.info(name + " " + prefix[0])
