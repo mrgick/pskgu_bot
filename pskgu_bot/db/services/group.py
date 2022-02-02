@@ -144,8 +144,6 @@ async def create_structured_rasp():
     """
         Создаёт структурированое расписание.
     """
-    def sort_preps(struct, key):
-        struct[key].sort()
 
     def sort_groups(struct, key):
         for k1, k2 in structured["ОФО"].items():
@@ -154,14 +152,25 @@ async def create_structured_rasp():
 
     prefixes = [x.prefix async for x in Group.find()]
     structured = {
-        "преподователь": [],
+        "преподователь": {"Кафедра отсутствует": []},
         "ОФО": {},
         "ЗФО": {}
     }
     for p in prefixes:
         p = list(p)
         if p[0] == "преподователь":
-            structured["преподователь"].append(p[1])
+            n = p[1].split(", ", 1)
+            n[0] = n[0].replace(" ", "_")
+            if not len(n) > 1:
+                structured[p[0]]["Кафедра отсутствует"].append(n[0])
+            elif n[1] == 'кафедра':
+                structured[p[0]]["Кафедра отсутствует"].append(n[0])
+            else:
+                if n[1][0] == ' ':
+                    n[1] = n[1][1:]
+                if not structured[p[0]].get(n[1]):
+                    structured[p[0]].update({n[1]: []})
+                structured[p[0]][n[1]].append(n[0])
         else:
             if not structured[p[0]].get(p[1]):
                 structured[p[0]].update({p[1]: {}})
@@ -171,7 +180,6 @@ async def create_structured_rasp():
                 structured[p[0]][p[1]].update({p[2]: []})
             structured[p[0]][p[1]][p[2]].append(p[3].replace(" ", "_"))
     # сортировка
-    sort_preps(structed, "преподователь")
-    sort_preps(structed, "ОФО")
-    sort_preps(structed, "ЗФО")
+    sort_groups(structured, "ОФО")
+    sort_groups(structured, "ЗФО")
     return structured
