@@ -49,11 +49,24 @@ def lxml_parce(html):
         return lxml.html.fromstring(html)
 
 
-def parse_urls(html):
+def parse_urls(html, route, regex):
     """
         Парсит ссылки со страницы, в дальнейшем называемые якорями.
     """
     html = lxml_parce(html)
+    # такая схема нужна, чтобы спарсить курс
+    if regex == 1:
+        if route.prefix[0] != "преподователь":
+            anchors = []
+            table = html.xpath(".//table")[0]
+            for tr in table.xpath("tr"):
+                for item, td in enumerate(tr.xpath("td"), 1):
+                    a = td.xpath("a")
+                    if len(a) > 0:
+                        anchors.append(
+                            Anchor(a[0].xpath("@href")[0], a[0].text_content(),
+                                   item))
+            return anchors
     return ((Anchor(x.xpath("@href")[0], x.text_content())
              for x in html.xpath(".//a")))
 

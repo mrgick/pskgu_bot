@@ -11,11 +11,12 @@ class Anchor:
         Класс Якорь (пошло от html тега <a>).
         Хранит в себе ссылку и имя страницы.
     """
-    __slots__ = ('href', 'title')
+    __slots__ = ('href', 'title', 'course')
 
-    def __init__(self, href, title):
+    def __init__(self, href, title, course=None):
         self.href = str(href)
         self.title = str(title)
+        self.course = course
 
 
 class Route:
@@ -25,7 +26,7 @@ class Route:
 
     __slots__ = ('valid', '_url', 'prefix')
 
-    def __init__(self, url, parent=None, prefix=None):
+    def __init__(self, url, parent=None, prefix=None, course=None):
         """
             Инициализация класса.
         """
@@ -40,6 +41,8 @@ class Route:
         if parent:
             if parent.prefix:
                 self.prefix.extend(parent.prefix)
+                if course:
+                    self.prefix.append(str(course))
         if prefix:
             self.prefix.append(prefix)
 

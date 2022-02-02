@@ -138,3 +138,40 @@ async def update_group(name, page_hash, prefix, days, page_url):
         upd_groups.append(group.name)
         await local_storage.put(Key("updated_groups"), upd_groups)
     await group.commit()
+
+
+async def create_structured_rasp():
+    """
+        Создаёт структурированое расписание.
+    """
+    def sort_preps(struct, key):
+        struct[key].sort()
+
+    def sort_groups(struct, key):
+        for k1, k2 in structured["ОФО"].items():
+            for k3, v in k2.items():
+                v.sort()
+
+    prefixes = [x.prefix async for x in Group.find()]
+    structured = {
+        "преподователь": [],
+        "ОФО": {},
+        "ЗФО": {}
+    }
+    for p in prefixes:
+        p = list(p)
+        if p[0] == "преподователь":
+            structured["преподователь"].append(p[1])
+        else:
+            if not structured[p[0]].get(p[1]):
+                structured[p[0]].update({p[1]: {}})
+                for i in range(1, 7, 1):
+                    structured[p[0]][p[1]].update({str(i): []})
+            if not structured[p[0]][p[1]].get(p[2]):
+                structured[p[0]][p[1]].update({p[2]: []})
+            structured[p[0]][p[1]][p[2]].append(p[3].replace(" ", "_"))
+    # сортировка
+    sort_preps(structed, "преподователь")
+    sort_preps(structed, "ОФО")
+    sort_preps(structed, "ЗФО")
+    return structured
