@@ -5,7 +5,7 @@
 from .parser import (get_page, get_hash, start_parser)
 from pskgu_bot.db.services import (initialize_storage, get_main_page_hash,
                                    set_main_page_hash, update_info_main_page,
-                                   create_structured_rasp)
+                                   create_structured_rasp, set_main_page_structure)
 from pskgu_bot import Config
 from pskgu_bot.utils import logger
 from pskgu_bot.bots.vk_bot.update import send_updates_to_users
@@ -28,11 +28,11 @@ async def run_parser():
             if hash_in_db != hash_now:
                 await start_parser()
                 logger.info("Parsing DONE")
+                structure = await create_structured_rasp()
+                await set_main_page_structure(structure)
                 await set_main_page_hash(hash_now)
                 upd_groups = await update_info_main_page()
                 await initialize_storage()
                 await send_updates_to_users(upd_groups)
         finally:
-            # p = await create_structured_rasp()
-            # logger.info(p)
             await sleep(sleeping_time)

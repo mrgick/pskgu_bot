@@ -20,7 +20,7 @@ async def get_main_page_hash():
 
 async def set_main_page_hash(page_hash):
     """
-        Получение хеша главной страницы.
+        Установление хеша главной страницы.
     """
     main_page = await Main_Page.find_one()
     main_page.page_hash = page_hash
@@ -52,3 +52,12 @@ async def update_info_main_page():
     main_page.information = info
     await main_page.commit()
     return upd_groups
+
+
+async def set_main_page_structure(structure):
+    """
+        Установление структуры расписания.
+    """
+    main_page = await Main_Page.find_one()
+    main_page.structure = structure
+    await main_page.commit()

@@ -35,6 +35,7 @@ class Main_Page(Document):
     """
     page_hash = fields.StringField(default="")
     information = fields.DictField(default={})
+    structure = fields.DictField(default={})
 
     class Meta:
         collection_name = "pages"
