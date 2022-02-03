@@ -4,7 +4,7 @@
 
 from pskgu_bot.db.models import Group, Key
 from pskgu_bot.db import local_storage
-from pskgu_bot.utils import get_today, get_week_days
+from pskgu_bot.utils import get_today, get_week_days, STRUCTED_DICT
 
 
 async def find_all_groups():
@@ -144,33 +144,53 @@ async def create_structured_rasp():
     """
         Создаёт структурированое расписание.
     """
-
     def sort_groups(struct, key):
-        for k1, k2 in structured["ОФО"].items():
+        """
+            Сортировка имён групп
+        """
+        for k1, k2 in structured[key].items():
             for k3, v in k2.items():
                 v.sort()
 
+    def insert_empty_or_unfound_prep(s, name, key=None):
+        """
+            Вставка преподавателя без кафедры
+            или не найденной кафедры в списке
+        """
+        if not key:
+            s['преподователь']['Прочее']['прочее'][
+                "Кафедра отсутствует"].append(name)
+            return
+
+        if not s['преподователь']['Прочее']['прочее'].get(key):
+            s['преподователь']['Прочее']['прочее'].update({key: []})
+        s['преподователь']['Прочее']['прочее'][key].append(name)
+        return
+
+    def insert_prep(s, name, key):
+        flag = False
+        for _, k2 in s['преподователь'].items():
+            for _, k3 in k2.items():
+                for k4, v in k3.items():
+                    if key == k4:
+                        v.append(name)
+                        flag = True
+        if not flag:
+            insert_empty_or_unfound_prep(structured, name, key)
+
     prefixes = [x.prefix async for x in Group.find()]
-    structured = {
-        "преподователь": {"Кафедра отсутствует": []},
-        "ОФО": {},
-        "ЗФО": {}
-    }
+    structured = STRUCTED_DICT.copy()
     for p in prefixes:
         p = list(p)
         if p[0] == "преподователь":
             n = p[1].split(", ", 1)
             n[0] = n[0].replace(" ", "_")
             if not len(n) > 1:
-                structured[p[0]]["Кафедра отсутствует"].append(n[0])
+                insert_empty_or_unfound_prep(structured, n[0])
             elif n[1] == 'кафедра':
-                structured[p[0]]["Кафедра отсутствует"].append(n[0])
+                insert_empty_or_unfound_prep(structured, n[0])
             else:
-                if n[1][0] == ' ':
-                    n[1] = n[1][1:]
-                if not structured[p[0]].get(n[1]):
-                    structured[p[0]].update({n[1]: []})
-                structured[p[0]][n[1]].append(n[0])
+                insert_prep(structured, n[0], n[1])
         else:
             if not structured[p[0]].get(p[1]):
                 structured[p[0]].update({p[1]: {}})
