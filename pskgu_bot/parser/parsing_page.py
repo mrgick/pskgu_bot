@@ -56,7 +56,7 @@ def parse_urls(html, route, regex):
     html = lxml_parce(html)
     # такая схема нужна, чтобы спарсить курс
     if regex == 1:
-        if route.prefix[0] != "преподователь":
+        if route.prefix[0] != "преподаватель":
             anchors = []
             table = html.xpath(".//table")[0]
             for tr in table.xpath("tr"):

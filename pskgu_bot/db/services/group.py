@@ -158,18 +158,18 @@ async def create_structured_rasp():
             или не найденной кафедры в списке
         """
         if not key:
-            s['преподователь']['Прочее']['прочее'][
+            s['преподаватель']['Прочее']['прочее'][
                 "Кафедра отсутствует"].append(name)
             return
 
-        if not s['преподователь']['Прочее']['прочее'].get(key):
-            s['преподователь']['Прочее']['прочее'].update({key: []})
-        s['преподователь']['Прочее']['прочее'][key].append(name)
+        if not s['преподаватель']['Прочее']['прочее'].get(key):
+            s['преподаватель']['Прочее']['прочее'].update({key: []})
+        s['преподаватель']['Прочее']['прочее'][key].append(name)
         return
 
     def insert_prep(s, name, key):
         flag = False
-        for _, k2 in s['преподователь'].items():
+        for _, k2 in s['преподаватель'].items():
             for _, k3 in k2.items():
                 for k4, v in k3.items():
                     if key == k4:
@@ -182,7 +182,7 @@ async def create_structured_rasp():
     structured = STRUCTED_DICT.copy()
     for p in prefixes:
         p = list(p)
-        if p[0] == "преподователь":
+        if p[0] == "преподаватель":
             n = p[1].split(", ", 1)
             n[0] = n[0].replace(" ", "_")
             if not len(n) > 1:

@@ -84,7 +84,7 @@ async def generate_by_regex(parent, anchor, regex=0):
         list_regex = [
             [r"(.*ОФО.*)", "ОФО", 2],
             [r"(.*ЗФО.*)", "ЗФО", 2],
-            [r"(.*препод.*)", "преподователь", 1]
+            [r"(.*препод.*)", "преподаватель", 1]
         ]
 
     else:
@@ -116,7 +116,7 @@ async def generate_group(route, page, title):
         """
         if name.find(" ") == -1:
             return name
-        elif prefix != "преподователь":
+        elif prefix != "преподаватель":
             return name.replace(" ", "_")
         else:
             return name.split(",")[0].replace(" ", "_")
