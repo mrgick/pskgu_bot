@@ -4,7 +4,7 @@
 
 from pskgu_bot.db.models import Group, Key
 from pskgu_bot.db import local_storage
-from pskgu_bot.utils import get_today, get_week_days
+from pskgu_bot.utils import get_today, get_week_days, STRUCTED_DICT
 
 
 async def find_all_groups():
@@ -52,11 +52,7 @@ async def update_group(name, page_hash, prefix, days, page_url):
             Создаёт словарь с изменёнными днями на этой и следующей неделе.
         """
         days = get_week_days(n=0) + get_week_days(n=1)
-        days_upd = {
-            'created': [],
-            'deleted': [],
-            'updated': {}
-        }
+        days_upd = {'created': [], 'deleted': [], 'updated': {}}
         for day in days:
             value_old = days_old.get(day)
             value_new = days_new.get(day)
@@ -117,6 +113,10 @@ async def update_group(name, page_hash, prefix, days, page_url):
             updated_items=["days", "page_url", "prefix", "page_hash"])
     else:
         group.updated_items = []
+        # при добавлении проверки на prefix в следующий if просиходит баг:
+        # не видит изменения в других атрибутах, кроме prefix и
+        # добавляет в l_s.updated_groups два раза имя группы
+        # не понятна причина бага, следует проверить в будущем
         if group.page_hash != page_hash or group.page_url != page_url:
             if group.days != days:
                 group.updated_days = generate_upd_days(group.days, days)
@@ -138,3 +138,69 @@ async def update_group(name, page_hash, prefix, days, page_url):
         upd_groups.append(group.name)
         await local_storage.put(Key("updated_groups"), upd_groups)
     await group.commit()
+
+
+async def create_structured_rasp():
+    """
+        Создаёт структурированое расписание.
+    """
+    def sort_groups(struct, key):
+        """
+            Сортировка имён групп
+        """
+        for k1, k2 in structured[key].items():
+            for k3, v in k2.items():
+                v.sort()
+        struct[key] = dict(sorted(struct[key].items()))
+
+    def insert_empty_or_unfound_prep(s, name, key=None):
+        """
+            Вставка преподавателя без кафедры
+            или не найденной кафедры в списке
+        """
+        if not key:
+            s['преподаватель']['Прочее']['прочее'][
+                "Кафедра отсутствует"].append(name)
+            return
+
+        if not s['преподаватель']['Прочее']['прочее'].get(key):
+            s['преподаватель']['Прочее']['прочее'].update({key: []})
+        s['преподаватель']['Прочее']['прочее'][key].append(name)
+        return
+
+    def insert_prep(s, name, key):
+        flag = False
+        for _, k2 in s['преподаватель'].items():
+            for _, k3 in k2.items():
+                for k4, v in k3.items():
+                    if key == k4:
+                        v.append(name)
+                        flag = True
+        if not flag:
+            insert_empty_or_unfound_prep(structured, name, key)
+
+    prefixes = [x.prefix async for x in Group.find()]
+    structured = STRUCTED_DICT.copy()
+    for p in prefixes:
+        p = list(p)
+        if p[0] == "преподаватель":
+            n = p[1].split(", ", 1)
+            n[0] = n[0].replace(" ", "_")
+            if not len(n) > 1:
+                insert_empty_or_unfound_prep(structured, n[0])
+            elif n[1] == 'кафедра':
+                insert_empty_or_unfound_prep(structured, n[0])
+            else:
+                insert_prep(structured, n[0], n[1])
+        else:
+            if not structured[p[0]].get(p[1]):
+                structured[p[0]].update({p[1]: {}})
+                for i in range(1, 7, 1):
+                    structured[p[0]][p[1]].update({str(i): []})
+            if not structured[p[0]][p[1]].get(p[2]):
+                structured[p[0]][p[1]].update({p[2]: []})
+            structured[p[0]][p[1]][p[2]].append(p[3].replace(" ", "_"))
+    # сортировка
+    sort_groups(structured, "ОФО")
+    sort_groups(structured, "ЗФО")
+    return structured

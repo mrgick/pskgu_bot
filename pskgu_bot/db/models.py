@@ -33,8 +33,10 @@ class Main_Page(Document):
     """
         Модель главной страницы.
     """
+    name = fields.StringField(required=True, unique=True)
     page_hash = fields.StringField(default="")
     information = fields.DictField(default={})
+    structure = fields.DictField(default={})
 
     class Meta:
         collection_name = "pages"

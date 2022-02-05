@@ -38,8 +38,8 @@ async def show_schedule(user_id: Optional[str] = None,
         """
             Вставка имени преподавателя или названия группы.
         """
-        if group.prefix[0] == "преподователь":
-            return "Преподователь"
+        if group.prefix[0] == "преподаватель":
+            return "Преподаватель"
         else:
             return "Группа"
 
