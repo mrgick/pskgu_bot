@@ -151,6 +151,7 @@ async def create_structured_rasp():
         for k1, k2 in structured[key].items():
             for k3, v in k2.items():
                 v.sort()
+        struct[key] = dict(sorted(struct[key].items()))
 
     def insert_empty_or_unfound_prep(s, name, key=None):
         """
