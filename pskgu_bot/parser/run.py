@@ -29,10 +29,10 @@ async def run_parser():
             if hash_in_db != hash_now:
                 await start_parser()
                 logger.info("Parsing DONE")
-                await set_main_page_hash(hash_now)
                 structure = await create_structured_rasp()
                 await set_main_page_structure(structure)
                 upd_groups = await update_info_main_page()
+                await set_main_page_hash(hash_now)
                 await initialize_storage()
                 await send_updates_to_users(upd_groups)
         finally:
