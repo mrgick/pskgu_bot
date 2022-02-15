@@ -148,7 +148,7 @@ def parse_schedule(html):
 
                     if divs == []:
                         text = normolize_text(text, "post")
-                        divs.append(text)
+                        divs = [[text]]
 
                     day.update({str(i): divs})
 
