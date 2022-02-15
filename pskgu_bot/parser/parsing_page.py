@@ -119,18 +119,39 @@ def parse_schedule(html):
             day = {}
             day_date = ""
             for i, td in enumerate(tr.xpath('td')):
+                divs = []
+                text = ""
 
-                for elem in td.xpath(".//*"):  # fixing spaces
-                    elem.tail = " " + elem.tail if elem.tail else " "
+                # парсинг в виде списоков
+                if i != 0:
+                    for div in td.xpath("div"):
+                        div1 = []
+                        if div.text:
+                            div1.append(normolize_text(div.text, 'post'))
+                        for br in div.xpath("br"):
+                            if br.tail:
+                                div1.append(normolize_text(br.tail, 'post'))
+                        if div1 != []:
+                            divs.append(div1)
 
-                text = normolize_text(td.text_content(), "prev")
+                # парсинг в виде строки
+                if i == 0 or divs == []:
+                    for elem in td.xpath(".//*"):
+                        elem.tail = " " + elem.tail if elem.tail else " "
+                    text = normolize_text(td.text_content(), "prev")
 
-                if i == 0:
-                    day_date = get_date(text)
-                    continue
-                if good_text(text):
-                    text = normolize_text(text, "post")
-                    day.update({str(i): text})
+                    if i == 0:
+                        day_date = get_date(text)
+                        continue
+
+                if good_text(text) or divs != []:
+
+                    if divs == []:
+                        text = normolize_text(text, "post")
+                        divs.append(text)
+
+                    day.update({str(i): divs})
+
             if day != {} and day_date:
                 data.update({day_date: day})
 

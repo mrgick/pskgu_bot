@@ -51,8 +51,10 @@ async def update_group(name, page_hash, prefix, days, page_url):
         """
             Создаёт словарь с изменёнными днями на этой и следующей неделе.
         """
-        days = get_week_days(n=0) + get_week_days(n=1)
+        # days = get_week_days(n=0) + get_week_days(n=1)
         days_upd = {'created': [], 'deleted': [], 'updated': {}}
+        """
+        Нужен рефакторинг кода!
         for day in days:
             value_old = days_old.get(day)
             value_new = days_new.get(day)
@@ -69,6 +71,7 @@ async def update_group(name, page_hash, prefix, days, page_url):
                         "old": value_old,
                         "new": value_new
                     }})
+        """
         return days_upd
 
     def generate_information(group):
