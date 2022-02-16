@@ -109,6 +109,45 @@ def parse_schedule(html):
             logger.error(e)
             return None
 
+    def parse_lists(td):
+        def add_elem_text_to_list(elem, tmp_list):
+            def add_text(txt, l1):
+                if txt:
+                    if good_text(str(txt)):
+                        l1.append(normolize_text(txt, 'post'))
+                        return True
+                return False
+
+            return (add_text(elem.text, tmp_list)
+                    or add_text(elem.tail, tmp_list))
+
+        def parse_next_elem(elem, tmp_list):
+            add_elem_text_to_list(elem, tmp_list)
+            for elem1 in elem:
+                parse_next_elem(elem1, tmp_list)
+
+        tmp = []
+        td_text = add_elem_text_to_list(td, tmp)
+
+        for elem1 in td:
+            # считаем, что двойные подгруппы появляются
+            # только тогда, когда есть div
+            if elem1.tag == 'div':
+                if not td_text:
+                    new_tmp = []
+                    parse_next_elem(elem1, new_tmp)
+                    if new_tmp != []:
+                        tmp.append(new_tmp)
+                else:
+                    parse_next_elem(elem1, tmp)
+            else:
+                parse_next_elem(elem1, tmp)
+
+        if len(tmp) > 0:
+            if isinstance(tmp[0], str):
+                tmp = [tmp]
+        return tmp
+
     html = lxml_parce(html)
     data = {}
 
@@ -122,17 +161,9 @@ def parse_schedule(html):
                 divs = []
                 text = ""
 
-                # парсинг в виде списоков
-                if i != 0:
-                    for div in td.xpath("div"):
-                        div1 = []
-                        if div.text:
-                            div1.append(normolize_text(div.text, 'post'))
-                        for br in div.xpath("br"):
-                            if br.tail:
-                                div1.append(normolize_text(br.tail, 'post'))
-                        if div1 != []:
-                            divs.append(div1)
+                # парсинг списков
+                if i > 0:
+                    divs = parse_lists(td)
 
                 # парсинг в виде строки
                 if i == 0 or divs == []:
