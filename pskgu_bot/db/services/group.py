@@ -182,10 +182,9 @@ async def create_structured_rasp():
         if not flag:
             insert_empty_or_unfound_prep(structured, name, key)
 
-    prefixes = [x.prefix async for x in Group.find()]
+    prefixes = [list(x.prefix) async for x in Group.find()]
     structured = STRUCTED_DICT.copy()
     for p in prefixes:
-        p = list(p)
         if p[0] == "преподаватель":
             n = p[1].split(", ", 1)
             n[0] = n[0].replace(" ", "_")
