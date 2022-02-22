@@ -20,7 +20,7 @@ async def run_parser():
     check_again = False
     while True:
         try:
-            sleeping_time = 300
+            sleeping_time = 600
             hash_now = get_hash(await get_page(Config.REMOTE_URL))
         except Exception:
             sleeping_time = 1800
@@ -29,7 +29,7 @@ async def run_parser():
             hash_in_db = await get_main_page_hash()
             if hash_in_db != hash_now or check_again:
                 if not check_again:
-                    await sleep(sleeping_time)
+                    await sleep(sleeping_time/2)
                 await start_parser()
                 logger.info("Parsing DONE")
                 structure = await create_structured_rasp()
