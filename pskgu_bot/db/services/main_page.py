@@ -29,6 +29,7 @@ async def set_main_page_hash(page_hash):
     """
     main_page = await get_main_page(name='main_hash')
     main_page.page_hash = page_hash
+    main_page.information = {get_today(full=True): []}
     await main_page.commit()
 
 
@@ -59,5 +60,4 @@ async def set_main_page_structure(structure):
     """
     main_page = await get_main_page(name='main_info')
     main_page.structure = structure
-    main_page.information = {get_today(full=True): []}
     await main_page.commit()
