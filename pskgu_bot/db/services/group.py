@@ -202,7 +202,14 @@ async def create_structured_rasp():
             if not structured[p[0]][p[1]].get(p[2]):
                 structured[p[0]][p[1]].update({p[2]: []})
             structured[p[0]][p[1]][p[2]].append(p[3].replace(" ", "_"))
+
     # сортировка
     sort_groups(structured, "ОФО")
     sort_groups(structured, "ЗФО")
+
+    # смена имен
+    structured["Расписание студентов ОФО и ОЗФО"] = structured.pop("ОФО")
+    structured["Расписание студентов ЗФО"] = structured.pop("ЗФО")
+    structured["Расписание преподавателей"] = structured.pop("преподаватель")
+
     return structured
