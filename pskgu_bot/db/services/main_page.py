@@ -57,9 +57,7 @@ async def set_main_page_structure(structure):
     """
         Установление структуры расписания.
     """
-    main_page = await get_main_page(
-        name='main_info',
-        information={get_today(full=True): []}
-    )
+    main_page = await get_main_page(name='main_info')
     main_page.structure = structure
+    main_page.information = {get_today(full=True): []}
     await main_page.commit()
