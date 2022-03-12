@@ -147,14 +147,6 @@ async def create_structured_rasp():
     """
         Создаёт структурированое расписание.
     """
-    def sort_groups(struct, key):
-        """
-            Сортировка имён групп
-        """
-        for k1, k2 in structured[key].items():
-            for k3, v in k2.items():
-                v.sort()
-        struct[key] = dict(sorted(struct[key].items()))
 
     def insert_empty_or_unfound_prep(s, name, key=None):
         """
@@ -182,7 +174,8 @@ async def create_structured_rasp():
         if not flag:
             insert_empty_or_unfound_prep(structured, name, key)
 
-    prefixes = [list(x.prefix) async for x in Group.find()]
+    prefixes = set([tuple(x.prefix) async for x in Group.find()])
+    prefixes = sorted(prefixes, key=lambda x: x[-1])
     structured = STRUCTED_DICT.copy()
     for p in prefixes:
         if p[0] == "преподаватель":
@@ -203,13 +196,8 @@ async def create_structured_rasp():
                 structured[p[0]][p[1]].update({p[2]: []})
             structured[p[0]][p[1]][p[2]].append(p[3].replace(" ", "_"))
 
-    # сортировка
-    sort_groups(structured, "ОФО")
-    sort_groups(structured, "ЗФО")
-
     # смена имен
     structured["Расписание студентов ОФО и ОЗФО"] = structured.pop("ОФО")
     structured["Расписание студентов ЗФО"] = structured.pop("ЗФО")
     structured["Расписание преподавателей"] = structured.pop("преподаватель")
-
     return structured
