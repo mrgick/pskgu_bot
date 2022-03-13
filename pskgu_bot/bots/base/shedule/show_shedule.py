@@ -3,7 +3,8 @@ from pskgu_bot.bots.base.messages import (MSG_NO_NAME_GROUP,
                                           msg_not_found_group_name)
 
 from pskgu_bot.db.services import (find_vk_user_by_id, find_group_by_name)
-from pskgu_bot.utils import get_week_days, get_name_of_day, str_to_int, logger
+from pskgu_bot.utils import (get_week_days, get_name_of_day, str_to_int,
+                             logger, double_list_to_str)
 from typing import Optional, BinaryIO
 from .to_image import week_to_image
 from io import BytesIO
@@ -28,7 +29,7 @@ async def show_schedule(user_id: Optional[str] = None,
                 day_name = get_name_of_day(key)
                 mess += day_name + ", " + key + "\n"
                 for x, lesson in day.items():
-                    mess += x + ") " + lesson + "\n"
+                    mess += x + ") " + double_list_to_str(lesson) + "\n"
                 mess += "\n"
         if mess == "":
             mess = "Данная неделя пуста.\n"

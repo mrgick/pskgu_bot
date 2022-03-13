@@ -109,6 +109,45 @@ def parse_schedule(html):
             logger.error(e)
             return None
 
+    def parse_lists(td):
+        def add_elem_text_to_list(elem, tmp_list):
+            def add_text(txt, l1):
+                if txt:
+                    if good_text(str(txt)):
+                        l1.append(normolize_text(txt, 'post'))
+                        return True
+                return False
+
+            return (add_text(elem.text, tmp_list)
+                    or add_text(elem.tail, tmp_list))
+
+        def parse_next_elem(elem, tmp_list):
+            add_elem_text_to_list(elem, tmp_list)
+            for elem1 in elem:
+                parse_next_elem(elem1, tmp_list)
+
+        tmp = []
+        td_text = add_elem_text_to_list(td, tmp)
+
+        for elem1 in td:
+            # считаем, что двойные подгруппы появляются
+            # только тогда, когда есть div
+            if elem1.tag == 'div':
+                if not td_text:
+                    new_tmp = []
+                    parse_next_elem(elem1, new_tmp)
+                    if new_tmp != []:
+                        tmp.append(new_tmp)
+                else:
+                    parse_next_elem(elem1, tmp)
+            else:
+                parse_next_elem(elem1, tmp)
+
+        if len(tmp) > 0:
+            if isinstance(tmp[0], str):
+                tmp = [tmp]
+        return tmp
+
     html = lxml_parce(html)
     data = {}
 
@@ -119,18 +158,31 @@ def parse_schedule(html):
             day = {}
             day_date = ""
             for i, td in enumerate(tr.xpath('td')):
+                divs = []
+                text = ""
 
-                for elem in td.xpath(".//*"):  # fixing spaces
-                    elem.tail = " " + elem.tail if elem.tail else " "
+                # парсинг списков
+                if i > 0:
+                    divs = parse_lists(td)
 
-                text = normolize_text(td.text_content(), "prev")
+                # парсинг в виде строки
+                if i == 0 or divs == []:
+                    for elem in td.xpath(".//*"):
+                        elem.tail = " " + elem.tail if elem.tail else " "
+                    text = normolize_text(td.text_content(), "prev")
 
-                if i == 0:
-                    day_date = get_date(text)
-                    continue
-                if good_text(text):
-                    text = normolize_text(text, "post")
-                    day.update({str(i): text})
+                    if i == 0:
+                        day_date = get_date(text)
+                        continue
+
+                if good_text(text) or divs != []:
+
+                    if divs == []:
+                        text = normolize_text(text, "post")
+                        divs = [[text]]
+
+                    day.update({str(i): divs})
+
             if day != {} and day_date:
                 data.update({day_date: day})
 

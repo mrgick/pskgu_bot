@@ -15,24 +15,33 @@ from asyncio import sleep
 
 async def run_parser():
     """
-        Запуск цикла парсера.
+        Запуск цикла парсера. (крон)
     """
+    check_again = False
     while True:
         try:
-            sleeping_time = 60
+            sleeping_time = 600
             hash_now = get_hash(await get_page(Config.REMOTE_URL))
         except Exception:
             sleeping_time = 1800
             logger.error("Can't get hash of main_page")
         else:
             hash_in_db = await get_main_page_hash()
-            if hash_in_db != hash_now:
+            if hash_in_db != hash_now or check_again:
+                if not check_again:
+                    await sleep(sleeping_time/2)
                 await start_parser()
                 logger.info("Parsing DONE")
                 structure = await create_structured_rasp()
                 await set_main_page_structure(structure)
+                logger.info("Structure set")
                 upd_groups = await update_info_main_page()
-                await set_main_page_hash(hash_now)
+                logger.info("Updated info set")
+                check_again = False
+                if hash_in_db != hash_now:
+                    check_again = True
+                    await set_main_page_hash(hash_now)
+                    logger.info("Main page hash change")
                 await initialize_storage()
                 await send_updates_to_users(upd_groups)
         finally:

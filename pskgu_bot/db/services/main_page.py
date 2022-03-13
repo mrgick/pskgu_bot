@@ -29,6 +29,7 @@ async def set_main_page_hash(page_hash):
     """
     main_page = await get_main_page(name='main_hash')
     main_page.page_hash = page_hash
+    main_page.information = {get_today(full=True): []}
     await main_page.commit()
 
 
@@ -38,17 +39,14 @@ async def update_info_main_page():
     """
     def set_dict(info, max_items=20):
         """
-            Возвращает уменьшенный словарь, если он превышает длину.
+            Уменьшает словарь, если он превышает длину.
         """
-        if len(info) > max_items:
-            for key, _ in info.items():
-                if len(info) < max_items:
-                    break
-                info.pop(key)
-        return info
+        while len(info) > max_items:
+            info.pop(list(info)[-1])
 
     main_page = await get_main_page(name='main_info')
-    info = set_dict(dict(main_page.information))
+    info = dict(main_page.information).copy()
+    set_dict(info)
     upd_groups = await local_storage.get(Key("updated_groups"))
     info.update({get_today(full=True): upd_groups})
     main_page.information = info

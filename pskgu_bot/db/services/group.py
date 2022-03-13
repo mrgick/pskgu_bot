@@ -5,6 +5,7 @@
 from pskgu_bot.db.models import Group, Key
 from pskgu_bot.db import local_storage
 from pskgu_bot.utils import get_today, get_week_days, STRUCTED_DICT
+from copy import deepcopy
 
 
 async def find_all_groups():
@@ -51,8 +52,10 @@ async def update_group(name, page_hash, prefix, days, page_url):
         """
             Создаёт словарь с изменёнными днями на этой и следующей неделе.
         """
-        days = get_week_days(n=0) + get_week_days(n=1)
+        # days = get_week_days(n=0) + get_week_days(n=1)
         days_upd = {'created': [], 'deleted': [], 'updated': {}}
+        """
+        Нужен рефакторинг кода!
         for day in days:
             value_old = days_old.get(day)
             value_new = days_new.get(day)
@@ -69,6 +72,7 @@ async def update_group(name, page_hash, prefix, days, page_url):
                         "old": value_old,
                         "new": value_new
                     }})
+        """
         return days_upd
 
     def generate_information(group):
@@ -144,15 +148,6 @@ async def create_structured_rasp():
     """
         Создаёт структурированое расписание.
     """
-    def sort_groups(struct, key):
-        """
-            Сортировка имён групп
-        """
-        for k1, k2 in structured[key].items():
-            for k3, v in k2.items():
-                v.sort()
-        struct[key] = dict(sorted(struct[key].items()))
-
     def insert_empty_or_unfound_prep(s, name, key=None):
         """
             Вставка преподавателя без кафедры
@@ -179,10 +174,11 @@ async def create_structured_rasp():
         if not flag:
             insert_empty_or_unfound_prep(structured, name, key)
 
-    prefixes = [x.prefix async for x in Group.find()]
-    structured = STRUCTED_DICT.copy()
+    prefixes = set([tuple(x.prefix) async for x in Group.find()])
+    prefixes = sorted(prefixes, key=lambda x: x[-1])
+    structured = deepcopy(STRUCTED_DICT)
+
     for p in prefixes:
-        p = list(p)
         if p[0] == "преподаватель":
             n = p[1].split(", ", 1)
             n[0] = n[0].replace(" ", "_")
@@ -200,7 +196,9 @@ async def create_structured_rasp():
             if not structured[p[0]][p[1]].get(p[2]):
                 structured[p[0]][p[1]].update({p[2]: []})
             structured[p[0]][p[1]][p[2]].append(p[3].replace(" ", "_"))
-    # сортировка
-    sort_groups(structured, "ОФО")
-    sort_groups(structured, "ЗФО")
+
+    # смена имен
+    structured["Расписание студентов ОФО и ОЗФО"] = structured.pop("ОФО")
+    structured["Расписание студентов ЗФО"] = structured.pop("ЗФО")
+    structured["Расписание преподавателей"] = structured.pop("преподаватель")
     return structured

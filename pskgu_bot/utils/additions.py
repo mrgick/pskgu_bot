@@ -1,5 +1,5 @@
 """
-    Файл с дополнительными, вспомогательными переменным и функциями.
+    Файл с дополнительными, вспомогательными переменными и функциями.
 """
 from typing import Optional
 
@@ -13,6 +13,28 @@ def str_to_int(x: str) -> Optional[int]:
         return x
     except Exception:
         return None
+
+
+def double_list_to_str(dl):
+    """
+        Перевод двойного листа в строку.
+        Пример:
+        - имеем [[1, 2], [3, 4]]
+        -> получаем '1 2 3 4'
+    """
+    return ''.join(str(j) + ' ' for x in dl for j in x)[:-1]
+
+
+def convert_lists_to_str_in_dict(cdict):
+    """
+        Заменяем двойные списки строками.
+        Пример:
+        - имеем {'01.01.2022': {'1': [['Предмет А', 'Аудитория Б']]}}
+        - получаем {'01.01.2022': {'1': 'Предмет А Аудитория Б'}}
+    """
+    for key1, value1 in cdict.items():
+        for key2, value2 in value1.items():
+            cdict[key1][key2] = double_list_to_str(value2)
 
 
 STRUCTED_DICT = {
