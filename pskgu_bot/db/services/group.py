@@ -5,6 +5,7 @@
 from pskgu_bot.db.models import Group, Key
 from pskgu_bot.db import local_storage
 from pskgu_bot.utils import get_today, get_week_days, STRUCTED_DICT
+from copy import deepcopy
 
 
 async def find_all_groups():
@@ -147,7 +148,6 @@ async def create_structured_rasp():
     """
         Создаёт структурированое расписание.
     """
-
     def insert_empty_or_unfound_prep(s, name, key=None):
         """
             Вставка преподавателя без кафедры
@@ -176,7 +176,8 @@ async def create_structured_rasp():
 
     prefixes = set([tuple(x.prefix) async for x in Group.find()])
     prefixes = sorted(prefixes, key=lambda x: x[-1])
-    structured = STRUCTED_DICT.copy()
+    structured = deepcopy(STRUCTED_DICT)
+
     for p in prefixes:
         if p[0] == "преподаватель":
             n = p[1].split(", ", 1)
