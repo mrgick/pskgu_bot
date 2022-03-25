@@ -22,3 +22,6 @@ class Config:
     # настроки вк бота
     VK_TOKEN = os.environ.get('TOKEN_VK')
     GROUP_ID = os.environ.get('GROUP_ID')
+
+    # web
+    WEB_URL = "https://mrgick.github.io/rasp_pskgu/index.html"

@@ -1,5 +1,6 @@
 from pskgu_bot.db.services import find_group_by_name, find_vk_user_by_id
 from pskgu_bot.utils.additions import str_to_int
+from pskgu_bot.config import Config
 from ..messages import (MSG_NO_NAME_AND_USER_GROUP, msg_not_found_group_name)
 from typing import Optional
 
@@ -28,4 +29,7 @@ async def get_group_url(user_id: Optional[str] = None,
     if group is None:
         return msg_not_found_group_name(group_name)
     else:
-        return "Ссылка: " + group.page_url + "\n"
+        web_bot = "{0}?find_group_name={1}&from=vk.com".format(
+            Config.WEB_URL, group.name)
+        return ("Оригинал: {0}\nWeb-версия бота: {1}\n".format(
+            group.page_url, web_bot))
