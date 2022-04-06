@@ -5,6 +5,7 @@ from pskgu_bot.bots.base.messages import (MSG_NO_NAME_GROUP,
 from pskgu_bot.db.services import (find_vk_user_by_id, find_group_by_name)
 from pskgu_bot.utils import (get_week_days, get_name_of_day, str_to_int,
                              logger, double_list_to_str)
+from pskgu_bot.config import Config
 from typing import Optional, BinaryIO
 from .to_image import week_to_image
 from io import BytesIO
@@ -77,7 +78,10 @@ async def show_schedule(user_id: Optional[str] = None,
     mess = ""
     days = get_week_days(week_shift)
     mess += add_name(group) + ": " + group.name + "\n"
-    mess += "Ссылка: " + group.page_url + "\n"
+    web_bot = "{0}?find_group_name={1}&from=vk.com".format(
+        Config.WEB_URL, group.name)
+    mess += "Оригинал: {0}\nWeb-версия бота: {1}\n".format(
+        group.page_url, web_bot)
     mess += make_readable_text(group, days)
 
     return mess, None
