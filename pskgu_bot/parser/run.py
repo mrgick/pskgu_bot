@@ -17,7 +17,7 @@ async def run_parser():
     """
         Запуск цикла парсера. (крон)
     """
-    check_again = False
+    check_again = True
     while True:
         try:
             sleeping_time = 600

@@ -82,9 +82,9 @@ async def generate_by_regex(parent, anchor, regex=0):
 
     if regex == 0:
         list_regex = [
-            [r"(.*ОФО.*)", "ОФО", 2],
-            [r"(.*ЗФО.*)", "ЗФО", 2],
-            [r"(.*препод.*)", "преподаватель", 1]
+            [r"(.*Студенты очной и очно-заочной формы обучения*)", "ОФО", 2],
+            [r"(.*Студенты заочной формы обучения*)", "ЗФО", 2],
+            [r"(.*Преподаватели*)", "преподаватель", 1]
         ]
 
     else:
@@ -128,6 +128,6 @@ async def generate_group(route, page, title):
         name = normolize_name(title, prefix[0])
         url = route.url
         await update_group(name, page_hash, prefix, days, url)
-        logger.info(name + " " + prefix[0])
+        logger.info(name + " " + prefix[0] + ' ' +str(days))
     except Exception as e:
         logger.error(title + " " + route.url + " " + e)
