@@ -128,6 +128,6 @@ async def generate_group(route, page, title):
         name = normolize_name(title, prefix[0])
         url = route.url
         await update_group(name, page_hash, prefix, days, url)
-        logger.info(name + " " + prefix[0] + ' ' +str(days))
+        logger.info(name + " " + prefix[0])
     except Exception as e:
         logger.error(title + " " + route.url + " " + e)
