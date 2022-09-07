@@ -82,8 +82,8 @@ async def generate_by_regex(parent, anchor, regex=0):
 
     if regex == 0:
         list_regex = [
-            [r"(.*Студенты очной и очно-заочной формы обучения*)", "ОФО", 2],
-            [r"(.*Студенты заочной формы обучения*)", "ЗФО", 2],
+            [r"(.*очно-заочной*)", "ОФО", 2],
+            [r"(.*заочной формы*)", "ЗФО", 2],
             [r"(.*Преподаватели*)", "преподаватель", 1]
         ]
 
@@ -130,4 +130,4 @@ async def generate_group(route, page, title):
         await update_group(name, page_hash, prefix, days, url)
         logger.info(name + " " + prefix[0])
     except Exception as e:
-        logger.error(title + " " + route.url + " " + e)
+        logger.error(title + " " + route.url + " " + str(e))

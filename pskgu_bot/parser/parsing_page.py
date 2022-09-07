@@ -101,13 +101,14 @@ def parse_schedule(html):
         """
         text = text.split(",")[1]
         text = text.replace(" ", "")
-        try:
-            date = datetime.datetime.strptime(text, '%d.%m.%y')
-            text = date_to_str(date)
-            return text
-        except Exception as e:
-            logger.error(e)
-            return None
+        formats = ['%d.%m.%y', '%d.%m.%Y']
+        for format in formats:
+            try:
+                date = datetime.datetime.strptime(text, format)
+                return date_to_str(date)
+            except Exception:
+                pass
+        return None
 
     def parse_lists(td):
         def add_elem_text_to_list(elem, tmp_list):
