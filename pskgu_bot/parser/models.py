@@ -48,6 +48,9 @@ class Route:
 
     @property
     def url(self):
+        if (len(self.prefix) > 0 and self.prefix[0] == 'колледж'
+                and not self._url.endswith('/k')):
+            return Config.REMOTE_URL + "/k/" + self._url
         return Config.REMOTE_URL + "/" + self._url
 
     def normolize_url(self, url):

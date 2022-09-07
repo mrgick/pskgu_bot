@@ -28,14 +28,14 @@ async def get_page(url):
         Асинхронно получает html страницу в виде байт-строки.
     """
     async with semaphore:
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(conn_timeout=10) as session:
             try:
                 async with session.get(url) as response:
                     await sleep(0.01)  # иногда нужна задержка
                     html = await response.read()
                     return html
             except Exception as e:
-                logger.error("get url " + url + "|" + e)
+                logger.error("get url " + url + "|" + str(e))
                 return None
 
 
@@ -61,7 +61,7 @@ async def get_anchors_and_run_async(route, page, regex):
         if tasks != []:
             await wait(tasks)
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{route.url} {route.prefix} {e}')
 
 
 async def generate_by_regex(parent, anchor, regex=0):
@@ -75,18 +75,24 @@ async def generate_by_regex(parent, anchor, regex=0):
             Проверяет на валидность имени.
             Нужен для нахождения определенных ссылок на главной странице.
         """
-        if regex == 0:
+        if item:
             if not re.match(item, title):
                 return False
         return True
 
     if regex == 0:
         list_regex = [
-            [r"(.*очно-заочной*)", "ОФО", 2],
-            [r"(.*заочной формы*)", "ЗФО", 2],
+            [r"(.*Колледж*)", "колледж", 3],
+            [r"(.*Студенты очной*)", "ОФО", 2],
+            [r"(.*Студенты заочной*)", "ЗФО", 2],
             [r"(.*Преподаватели*)", "преподаватель", 1]
         ]
-
+    elif regex == 3:
+        list_regex = [
+            [r"(.*Студенты очной*)", "ОФО", 1],
+            [r"(.*Студенты заочной*)", "ЗФО", 1],
+            [r"(.*Преподаватели*)", "преподаватель", 1]
+        ]
     else:
         list_regex = [[None, anchor.title, 1]]
 
@@ -114,6 +120,7 @@ async def generate_group(route, page, title):
         """
             Преобразует имя в нормальный вид.
         """
+        name = name.strip()
         if name.find(" ") == -1:
             return name
         elif prefix != "преподаватель":
