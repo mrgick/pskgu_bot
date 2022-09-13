@@ -2,8 +2,10 @@
     Файл запуска вк бота.
 """
 
-from .bot import vk_bot
-from .handlers import labelers
+from .bot import vk_bot, bl
+from . import buttons
+
+labelers = [buttons.bl, bl]
 
 
 async def run_vk_bot():

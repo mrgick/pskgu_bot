@@ -1,6 +1,6 @@
-from pskgu_bot.bots.base.messages import (MSG_NO_NAME_GROUP,
-                                          MSG_NO_NAME_AND_USER_GROUP,
-                                          msg_not_found_group_name)
+from calendar import month
+from pskgu_bot.bots import messages
+from pskgu_bot.bots.base.shedule.find_group import try_guess_user_group
 
 from pskgu_bot.db.services import (find_vk_user_by_id, find_group_by_name)
 from pskgu_bot.utils import (get_week_days, get_name_of_day, str_to_int,
@@ -9,6 +9,23 @@ from pskgu_bot.config import Config
 from typing import Optional, BinaryIO
 from .to_image import week_to_image
 from io import BytesIO
+
+MONTHS = {'01': 'янв',
+          '02': 'фев',
+          '03': 'мар',
+          '04': 'апр',
+          '05': 'май',
+          '06': 'июн',
+          '07': 'июл',
+          '08': 'авг',
+          '09': 'сен',
+          '10': 'окт',
+          '11': 'ноя',
+          '12': 'дек'}
+
+def key_to_normal_format(key: str) -> str:
+    y, m, d = key.split('-')
+    return MONTHS[m] + ' ' + d
 
 
 async def show_schedule(user_id: Optional[str] = None,
@@ -33,7 +50,9 @@ async def show_schedule(user_id: Optional[str] = None,
                     mess += x + ") " + double_list_to_str(lesson) + "\n"
                 mess += "\n"
         if mess == "":
-            mess = "Данная неделя пуста.\n"
+            first_date = key_to_normal_format(min(keys))
+            last_date = key_to_normal_format(max(keys))
+            mess = f"\nНа этой неделе ({first_date} - {last_date}) нет никаких занятий.\nВозможно, их и не должно быть.\n"
         return mess
 
     def add_name(group):
@@ -60,11 +79,10 @@ async def show_schedule(user_id: Optional[str] = None,
             group_name = user.group
 
     if (group_name is None or group_name == ""):
-        return MSG_NO_NAME_AND_USER_GROUP, None
+        return messages.MSG_NO_NAME_AND_USER_GROUP, None
 
     group = await find_group_by_name(group_name)
-    if not group:
-        return msg_not_found_group_name(group_name), None
+    if not group: return await try_guess_user_group(group_name), None
 
     if image:
         try:
@@ -73,7 +91,7 @@ async def show_schedule(user_id: Optional[str] = None,
             return "Расписание.", img
         except Exception as e:
             logger.error(e)
-            return "Произошла ошибка.", None
+            return "Произошла ошибка при создании изображения.", None
 
     mess = ""
     days = get_week_days(week_shift)
