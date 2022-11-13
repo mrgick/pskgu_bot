@@ -25,3 +25,7 @@ class Config:
 
     # web
     WEB_URL = "https://mrgick.github.io/rasp_pskgu/index.html"
+
+    # настройки cron
+    CRON_PERIOD = 5*60
+    URL_PING = os.environ.get('URL_PING', 'https://127.0.0.1')
