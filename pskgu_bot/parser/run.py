@@ -17,7 +17,7 @@ async def run_parser():
     """
         Запуск цикла парсера. (крон)
     """
-    check_again = False
+    check_again = True
     while True:
         try:
             sleeping_time = 600
@@ -32,9 +32,9 @@ async def run_parser():
                     await sleep(sleeping_time/2)
                 await start_parser()
                 logger.info("Parsing DONE")
-                structure = await create_structured_rasp()
-                await set_main_page_structure(structure)
-                logger.info("Structure set")
+                # structure = await create_structured_rasp()
+                # await set_main_page_structure(structure)
+                # logger.info("Structure set")
                 upd_groups = await update_info_main_page()
                 logger.info("Updated info set")
                 check_again = False

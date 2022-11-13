@@ -56,7 +56,9 @@ def parse_urls(html, route, regex):
     html = lxml_parce(html)
     # такая схема нужна, чтобы спарсить курс
     if regex == 1:
-        if route.prefix[0] != "преподаватель":
+        if (len(route.prefix) > 0 and route.prefix[0] in ["ОФО", "ЗФО"]
+                or len(route.prefix) > 1 and route.prefix[0] == "колледж"
+                and route.prefix[1] in ["ОФО", "ЗФО"]):
             anchors = []
             table = html.xpath(".//table")[0]
             for tr in table.xpath("tr"):
@@ -101,13 +103,14 @@ def parse_schedule(html):
         """
         text = text.split(",")[1]
         text = text.replace(" ", "")
-        try:
-            date = datetime.datetime.strptime(text, '%d.%m.%Y')
-            text = date_to_str(date)
-            return text
-        except Exception as e:
-            logger.error(e)
-            return None
+        formats = ['%d.%m.%y', '%d.%m.%Y']
+        for format in formats:
+            try:
+                date = datetime.datetime.strptime(text, format)
+                return date_to_str(date)
+            except Exception:
+                pass
+        return None
 
     def parse_lists(td):
         def add_elem_text_to_list(elem, tmp_list):

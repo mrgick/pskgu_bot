@@ -27,7 +27,7 @@ MSG_HELP = '''
 ― Написание слэша (косой черты, /) не является обязательным.
 
 Чтобы подробнее ознакомиться с доступным функционалом, перейдите по ссылке:
-https://bit.ly/2ZucBEv
+https://vk.com/@pskgu_bot-instrukciya-dlya-bota
 '''
 
 MSG_TIMETABLE = (
