@@ -23,7 +23,7 @@ async def startup_event():
 
 
 @app.get("/")
-async def test_connection(request: Request, response: Response):
+async def index(request: Request, response: Response):
     return {"status": "200"}
 
 
