@@ -7,7 +7,7 @@ lxml==4.7.1
 motor==2.3.1
 Pillow==8.3.2
 ttf-opensans==2020.10.30
-umongo==3.0.0
+umongo==3.1.0
 uvicorn==0.19.0
 vkbottle==3.0.2
 vkbottle-types==5.131
