@@ -28,7 +28,7 @@ async def get_page(url):
         Асинхронно получает html страницу в виде байт-строки.
     """
     async with semaphore:
-        async with aiohttp.ClientSession(conn_timeout=10) as session:
+        async with aiohttp.ClientSession(conn_timeout=50) as session:
             try:
                 async with session.get(url) as response:
                     await sleep(0.01)  # иногда нужна задержка
