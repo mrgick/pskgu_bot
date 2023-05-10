@@ -11,7 +11,7 @@ class Config:
     """
     # настроки парсера
     STOP_PARSER = os.environ.get('STOP_PARSER', 'nostop')
-    REMOTE_URL = "http://rasp.pskgu.ru"
+    REMOTE_URL = "https://rasp.pskgu.ru"
     SEMAPHORE = int(os.environ.get('SEMAPHORE', 10))
 
     # настроки mongo db
