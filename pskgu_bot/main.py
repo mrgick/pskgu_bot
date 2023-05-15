@@ -19,7 +19,7 @@ app = FastAPI()
 async def startup_event():
     await initialize_storage()
     await bot_wrap()
-    await run_cron()
+    # await run_cron()
 
 
 @app.get("/")
