@@ -1,1 +1,1 @@
-worker: python pskgu_bot/main.py 
+web: uvicorn pskgu_bot.main:app --host=0.0.0.0 --port=${PORT:-4000}
