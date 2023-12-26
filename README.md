@@ -42,4 +42,4 @@ export MONGO_URL="mongodb://localhost:27017"
 
 - [группа вк](https://vk.com/pskgu_bot)
 - [апи расписания](https://github.com/mrgick/pskgu_api)
-- [альтернативный сайт расписания](https://mrgick.github.io/rasp_pskgu/)
+- [альтернативный сайт расписания](https://github.com/mrgick/rasp_pskgu)
